@@ -1,0 +1,17 @@
+{% extends "xyq_files/base.html" %}
+
+{% block content %}
+    {% if topic.id == 3 %}
+        <p>你没有权限在此发消息</p>
+    {% else %}
+        <p><a href="{% url 'xyq_files:topic' topic.id %}">{{ topic }}</a></p>
+
+        <p>发消息：</p>
+        <form action="{% url 'xyq_files:new_entry' topic.id %}" method='post'>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button name="submit">发消息</button>
+        </form>
+    {% endif %}
+
+{% endblock content %}

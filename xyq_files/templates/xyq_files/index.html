@@ -1,0 +1,20 @@
+{% extends "xyq_files/base.html" %}
+
+{% block page_header %}
+    <div class="jumbotron">
+        <h1 class="display-3">更好的校园墙！欢迎光临！</h1>
+
+        <p class="lead">站主&制作人：刻靖</p>
+        {% if user.is_authenticated %}
+            <a class="btn btn-lg btn-primary" href="{% url 'xyq_files:topics' %}"
+                role="button">进入 &raquo;</a>
+            <a class="btn btn-lg btn-primary" href="{% url 'users:logout' %}"
+                role="button">登出 &raquo;</a>
+        {% else %}
+            <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}"
+                role="button">注册 &raquo;</a>
+            <a class="btn btn-lg btn-primary" href="{% url 'users:login' %}"
+                role="button">登录 &raquo;</a>
+        {% endif %}
+    </div>
+{% endblock page_header %}

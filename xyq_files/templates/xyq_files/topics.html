@@ -1,0 +1,19 @@
+{% extends "xyq_files/base.html" %}
+
+{% block page_header %}
+    <h1>板块</h1>
+{% endblock page_header %}
+
+{% block content %}
+
+    <ul>
+        {% for topic in topics %}
+            <li><h3>
+                <a href="{% url 'xyq_files:topic' topic.id %}">{{ topic }}</a>
+            </h3></li>
+        {% empty %}
+            <li><h3>尚未添加板块</h3></li>
+        {% endfor %}
+    </ul>
+
+{% endblock content %}

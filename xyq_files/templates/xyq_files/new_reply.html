@@ -1,0 +1,13 @@
+{% extends "xyq_files/base.html" %}
+
+{% block content %}
+    <p><a href="{% url 'xyq_files:entry' entry.id %}">{{ entry }}</a></p>
+    
+    <p>发送评论</p>
+    <form action="{% url 'xyq_files:new_reply' entry.id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name='submit'>发送</button>
+    </form>
+
+{% endblock content %}

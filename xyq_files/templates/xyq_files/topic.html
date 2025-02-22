@@ -1,0 +1,41 @@
+{% extends "xyq_files/base.html" %}
+
+{% block page_header %}
+    <h3>{{ topic }}</h3>
+{% endblock page_header %}
+
+{% block content %}
+
+    <p>帖子:</p>
+    {% if topic.id != 3 and user.is_authenticated %}
+        <p>
+            <a href="{% url 'xyq_files:new_entry' topic.id %}">发消息</a>
+        </p>
+    {% elif  topic.id != 3 and not user.is_authenticated %}
+        <p>
+            <a href="{% url 'users:login' %}">您要登陆后才能发消息</a>
+        </p>
+    {% endif %}
+    <ul>
+    {% for entry in entries %}
+        <div class="card mb-3">
+            <h4 class="card-header">
+                {{ entry.owner }} : 
+                    
+                <small></small><small><small>
+                    <a href="{% url 'xyq_files:entry' entry.id %}">查看回复</a>
+                </small></small></small></small>
+                <p style="font-size: 12px;">
+                    {{ entry.date_added|date:'M d, y H:i'}}
+                </p>
+                </h4>
+                <div class="card-body">
+                    {{ entry.text|linebreaks }}
+            </div>
+        </div>
+    {% empty %}
+        <p>此版块还没有内容哦</p>
+    {% endfor %}
+    </ul>
+
+{% endblock content %}
