@@ -28,6 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://sdsyxyq.onrender.com',  # Render 域名
+    'http://localhost:8000',         # 本地开发环境
+]
 
 # Application definition
 
