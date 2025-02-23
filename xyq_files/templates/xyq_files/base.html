@@ -5,21 +5,26 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+    <style>
+        .center-text {
+            text-align: center;
+        }
+    </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <title>校园墙</title>
-
     {% bootstrap_css %}
     {% bootstrap_javascript jquery='full' %}
 </head>
 <body>
     <nav class="navbar-expand-md navbar-light bg-light mb-4 border">
+
         <a class="navbar-brand" href="{% url 'xyq_files:index' %}">
             校园墙</a>
         
         <button class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarCollapse" aria-controls="navbarCollapse"
-            aria-expanded="false" aria-label="Toggle navigation">
+                data-target="#navbarCollapse" aria-controls="navbarCollapse"
+                aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-cllapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">

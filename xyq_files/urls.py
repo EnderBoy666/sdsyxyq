@@ -4,8 +4,12 @@ from django.urls import path
 
 from . import views
 
+from django.views.generic.base import RedirectView
+
 app_name = 'xyq_files'
 urlpatterns = [
+    #图标
+    path(r'favicon.ico',RedirectView.as_view(url=r'favicon.ico')),
     #主页
     path('',views.index,name='index'),
     #显示所有主题

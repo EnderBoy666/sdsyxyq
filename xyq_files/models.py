@@ -43,3 +43,4 @@ class Reply(models.Model):
             return f"{self.text[:50]}..."
         else:
             return self.text
+
