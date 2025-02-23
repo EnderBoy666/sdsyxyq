@@ -70,3 +70,20 @@ def new_reply(request,entry_id):
     #显示空表单或指出表单数据无效
     context={'entry':entry,'form':form}
     return render(request,'xyq_files/new_reply.html',context)
+
+#下载文件
+import os
+from django.http import HttpResponse
+
+def download(request):
+    file_path = r'db.sqlite3'
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+        response = HttpResponse(file_data, content_type='application/octet-stream')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(file_path))
+        return response
+    else:
+        return HttpResponse("Sorry, the file you requested does not exist.")
+
+

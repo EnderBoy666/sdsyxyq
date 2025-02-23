@@ -18,4 +18,6 @@ urlpatterns = [
     path('entry/<int:entry_id>/', views.entry,name='entry'),
     #用于添加回复的页面
     path('new_reply/<int:entry_id>/',views.new_reply,name='new_reply'),
+    #下载
+    path('downloads',views.download,name='downlaod'),
 ]
