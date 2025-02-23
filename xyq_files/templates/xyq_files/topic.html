@@ -6,6 +6,11 @@
 
 {% block content %}
 
+    {% if topic.id == 4 %}
+        <p>
+            在这里说出你想要的新功能，未来就有可能实现哦~
+        </p>
+    {% endif %}
     <p>帖子:</p>
     {% if topic.id != 3 and user.is_authenticated %}
         <p>
