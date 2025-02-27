@@ -7,9 +7,11 @@ certifi==2025.1.31
 charset-normalizer==3.4.1
 click==8.1.8
 colorama==0.4.6
+diff-match-patch==20241021
 dj-database-url==2.3.0
 Django==4.2.18
 django-bootstrap4==24.4
+django-import-export==4.3.7
 gunicorn==23.0.0
 h11==0.14.0
 idna==3.10
@@ -19,6 +21,7 @@ psycopg2-binary==2.9.10
 requests==2.32.3
 soupsieve==2.6
 sqlparse==0.5.3
+tablib==3.8.0
 typing_extensions==4.12.2
 tzdata==2024.2
 urllib3==2.2.3
