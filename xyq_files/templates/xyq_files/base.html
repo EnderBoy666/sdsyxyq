@@ -23,24 +23,33 @@
     {% bootstrap_javascript jquery='full' %}
 </head>
 <body>
-    <nav class="navbar-expand-md navbar-light bg-light mb-4 border">
-
+    <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
+        <!-- 品牌链接 -->
         <a class="navbar-brand" href="{% url 'xyq_files:index' %}">
-            校园墙</a>
-        
+            校园墙
+        </a>
+    
+        <!-- 切换按钮 -->
         <button class="navbar-toggler" type="button" data-toggle="collapse"
                 data-target="#navbarCollapse" aria-controls="navbarCollapse"
                 aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-cllapse" id="navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <!-- 导航栏内容 -->
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <!-- 左侧导航项 -->
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'xyq_files:topics' %}">板块</a></li>
+                    <a class="nav-link" href="{% url 'xyq_files:topics' %}">板块</a>
+                </li>
             </ul>
+    
+            <!-- 右侧导航项 -->
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <span class="navbar-text">{{ user.username }},欢迎来到校园墙。</span>
+                        <span class="navbar-text">{{ user.username }}, 欢迎来到校园墙。</span>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'users:logout' %}">登出</a>
@@ -49,14 +58,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'users:register' %}">注册</a>
                     </li>
-                    <li class="nav-item" >
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'users:login' %}">登录</a>
                     </li>
                 {% endif %}
             </ul>
         </div>
     </nav>
-
     <main role="main" class="container">
         <div class="pb-2 mb-2 border-bottom">
             {% block page_header %}{% endblock page_header %}
