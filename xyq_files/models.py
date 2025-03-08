@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
+from users.models import CustomUser
+
 
 class Topic(models.Model):
     """用户看到的校园墙主题"""
@@ -16,7 +17,7 @@ class Entry(models.Model):
     topic = models.ForeignKey(Topic,on_delete=models.CASCADE)
     text = models.TextField()
     date_added = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser,on_delete=models.CASCADE,null=True)
 
     class Meta:
         verbose_name_plural = 'entries'
@@ -33,7 +34,7 @@ class Reply(models.Model):
     entry = models.ForeignKey(Entry,on_delete=models.CASCADE)
     text = models.TextField()
     date_added = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True)
 
     class Meta:
         verbose_name_plural = 'replies'
