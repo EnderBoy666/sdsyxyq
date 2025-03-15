@@ -10,4 +10,8 @@ urlpatterns = [
     path('',include('django.contrib.auth.urls')),
     #注册页面
     path('register/',views.register,name='register'),
+    #个人主页
+    path('user/<int:user_id>',views.introduction,name='introduction'),
+    #修改简介
+    path('edit_introduction/<int:user_id>',views.edit_introduction,name='edit_introduction')
 ]

@@ -1,0 +1,42 @@
+{% extends "xyq_files/base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+    <h1>{{ user1 }}</h1>
+{% endblock page_header %}
+
+{% block content %}
+    <ul>
+        <div class="card mb-3">
+            <h5 class="card-header">简介：
+                {% if user.username == user1.username %}
+                    <a href="{% url 'users:edit_introduction' user1.id %}" class="btn btn-primary btn-sm">
+                        修改简介
+                    </a>
+                {% endif %}
+            </h5>
+            <div class="card-body">
+                {{ user1.introduction }}
+            </div>
+        </div>
+    </ul>
+    <h2>{{user1}}发的消息：</h2>
+    {% for entry in entries %}
+        {% if entry.owner == user1 %}
+        <div class="card mb-3">
+            <h6 class="card-header">
+                <a href="{% url 'users:introduction' entry.owner.id %}" >{{ entry.owner }}</a> : 
+                <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复</a>
+                <p style="font-size: 12px;">
+                    {{ entry.date_added|date:'M d, y H:i'}}
+                </p>
+                </h6>
+                <div class="card-body">
+                    {{ entry.text|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+    {% empty %}
+        <p>该用户还没发过消息哦~~</p>
+    {% endfor %}
+{% endblock content %}

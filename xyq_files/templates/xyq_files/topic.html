@@ -14,7 +14,8 @@
     <p>帖子:</p>
     {% if topic.id != 3 and user.is_authenticated %}
         <p>
-            <a href="{% url 'xyq_files:new_entry' topic.id %}">发消息</a>
+            <a class="btn btn-lg btn-primary" href="{% url 'xyq_files:new_entry' topic.id %}"
+            role="button">发消息&raquo;</a>
         </p>
     {% elif  topic.id != 3 and not user.is_authenticated %}
         <p>
@@ -25,10 +26,10 @@
     {% for entry in entries %}
         <div class="card mb-3">
             <h4 class="card-header">
-                {{ entry.owner }} : 
+                <a href="{% url 'users:introduction' entry.owner.id %}">{{ entry.owner }}</a> : 
                     
                 <small></small><small><small>
-                    <a href="{% url 'xyq_files:entry' entry.id %}">查看回复</a>
+                    <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复</a>
                 </small></small></small></small>
                 <p style="font-size: 12px;">
                     {{ entry.date_added|date:'M d, y H:i'}}

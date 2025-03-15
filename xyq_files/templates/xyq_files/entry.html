@@ -6,15 +6,16 @@
 
 {% block content %}
 
-    <p>回复</p>
+    <p>回复：</p>
     <p>
-        <a href="{% url 'xyq_files:new_reply' entry.id %}">发评论</a>
+        <a class="btn btn-lg btn-primary" href="{% url 'xyq_files:new_reply' entry.id %}"
+        role="button">发评论&raquo;</a>
     </p>
     <ul>
         {% for reply in replies %}
             <div class="card mb-3">
                 <h5 class="card-header">
-                    {{ reply.owner }}:
+                    <a href="{% url 'users:introduction' reply.owner.id %}">{{ reply.owner }}:</a>
                     <p style="font-size: 12px;">
                         {{ reply.date_added|date:'M d, Y h:i'}}
                     </p>
