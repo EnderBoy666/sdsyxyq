@@ -3,6 +3,7 @@
 
 {% block page_header %}
     <h1>{{ user1 }}</h1>
+    <a href="{% url 'users:password_change' %}">修改密码</a>
 {% endblock page_header %}
 
 {% block content %}
