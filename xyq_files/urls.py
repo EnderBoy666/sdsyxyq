@@ -24,4 +24,10 @@ urlpatterns = [
     path('new_reply/<int:entry_id>/',views.new_reply,name='new_reply'),
     #下载
     path('downloads',views.download,name='downlaod'),
+    #未读消息
+    path('unread_messages',views.unread_messages,name='unread_messages'),
+    #标为已读
+    path('mark_all_as_read/', views.mark_all_as_read, name='mark_all_as_read'),
+    #全部消息
+    path('all_messages',views.all_messages,name='all_messages'),
 ]

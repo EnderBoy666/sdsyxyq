@@ -18,7 +18,7 @@ class Entry(models.Model):
     text = models.TextField()
     date_added = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(CustomUser,on_delete=models.CASCADE,null=True)
-
+    is_read = models.BooleanField(default=False)
     class Meta:
         verbose_name_plural = 'entries'
 
@@ -35,7 +35,7 @@ class Reply(models.Model):
     text = models.TextField()
     date_added = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True)
-
+    is_read = models.BooleanField(default=False)
     class Meta:
         verbose_name_plural = 'replies'
 

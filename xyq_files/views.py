@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from .models import Topic,Entry,Reply
 from .forms import EntryForm,ReplyForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -87,3 +88,37 @@ def download(request):
         return HttpResponse("Sorry, the file you requested does not exist.")
 
 
+
+@login_required
+def unread_messages(request):
+    # 获取当前用户的未读消息
+    unread_reply = Reply.objects.filter(entry__owner=request.user, is_read=False)
+    unread_reply = unread_reply.order_by('-date_added')
+    return render(request, 'xyq_files/unread_messages.html', {'unread_messages':unread_reply})
+
+
+@login_required
+def some_view(request):
+    # 获取当前用户的未读消息数量
+    unread_count = Reply.objects.filter(entry__owner=request.user, is_read=False).count()
+    print(unread_count)
+    # 将未读消息数量传递给模板
+    return render(request, 'xyq_files/base.html', {'unread_count': unread_count})
+
+@login_required
+def mark_all_as_read(request):
+    # 获取当前用户的所有未读消息
+    unread_messages = Reply.objects.filter(entry__owner=request.user, is_read=False)
+    
+    # 将所有未读消息标记为已读
+    unread_messages.update(is_read=True)
+    
+    # 重定向到消息列表页面
+    return redirect('xyq_files:unread_messages')
+
+@login_required
+def all_messages(request):
+    # 获取当前用户的未读消息
+    reply = Reply.objects.filter(entry__owner=request.user)
+    reply = reply.order_by('-date_added')
+    return render(request, 'xyq_files/all_messages.html', {'all_messages':reply})

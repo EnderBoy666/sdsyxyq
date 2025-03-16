@@ -48,6 +48,11 @@
             <!-- 右侧导航项 -->
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
+                    {% if unread_count > 0 %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'xyq_files:unread_messages' %}">你有<strong>{{ unread_count }}</strong>条未读消息</a></span>
+                        </li>
+                    {% endif %}
                     <li class="nav-item">
                         <span class="navbar-text"><a href="{% url 'users:introduction' user.id %}">{{ user.username }}</a>, 欢迎来到校园墙。</span>
                     </li>

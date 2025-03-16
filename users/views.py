@@ -1,18 +1,13 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from .models import CustomUser
 from .forms import CustomUserCreationForm,IntroductionForm  # 导入自定义表单
 from django.http import Http404
 from xyq_files.models import Entry
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import ChangeUsernameForm
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash  # 用于保持用户登录状态
-from .forms import ChangeUsernameForm, IntroductionForm
 from django.contrib.auth.forms import PasswordChangeForm
 from .models import CustomUser
 
@@ -85,3 +80,4 @@ def edit_profile(request, user_id):
         'password_form': password_form,
         'user': user,
     })
+

@@ -1,0 +1,31 @@
+{% extends 'xyq_files/base.html' %}
+
+{% block content %}
+<h1>未读消息</h1>
+<a href="{% url 'xyq_files:mark_all_as_read' %}" class="btn btn-primary btn-sm">标记所有为已读</a>
+<ul>
+    {% for message in unread_messages %}
+    <li>
+        <div class="card mb-3">
+            <h5 class="card-header">
+                <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
+            </h5>
+            <h5 class="card-header">
+                
+                <a href="{% url 'users:introduction' message.owner.id %}">{{ message.owner }}:</a>
+                <p style="font-size: 12px;">
+                    {{ message.date_added|date:'M d, Y h:i'}}
+                </p>
+            </h5>
+            <div class="card-body">
+                {{ message.text|linebreaks }}
+            </div>
+        </div>
+    </li>
+    {% empty %}
+    <li>暂时没有新消息哦~~</li>
+    {% endfor %}
+</ul>
+<p><a href="{% url 'xyq_files:all_messages' %}">查看更早的消息</a></p>
+{% endblock %}
+

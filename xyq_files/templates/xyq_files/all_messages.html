@@ -1,0 +1,28 @@
+{% extends 'xyq_files/base.html' %}
+
+{% block content %}
+<h1>全部消息</h1>
+<ul>
+    {% for message in all_messages %}
+    <li>
+        <div class="card mb-3">
+            <h5 class="card-header">
+                <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
+            </h5>
+            <h5 class="card-header">
+                
+                <a href="{% url 'users:introduction' message.owner.id %}">{{ message.owner }}:</a>
+                <p style="font-size: 12px;">
+                    {{ message.date_added|date:'M d, Y h:i'}}
+                </p>
+            </h5>
+            <div class="card-body">
+                {{ message.text|linebreaks }}
+            </div>
+        </div>
+    </li>
+    {% empty %}
+    <li>暂时消息哦~~</li>
+    {% endfor %}
+</ul>
+{% endblock %}
