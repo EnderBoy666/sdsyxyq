@@ -4,6 +4,7 @@ from django.urls import path,include
 from django.urls import path
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
 from . import views
+from .views import edit_profile
 
 app_name='users'
 urlpatterns = [
@@ -13,8 +14,6 @@ urlpatterns = [
     path('register/',views.register,name='register'),
     #个人主页
     path('user/<int:user_id>',views.introduction,name='introduction'),
-    #修改简介
-    path('edit_introduction/<int:user_id>',views.edit_introduction,name='edit_introduction'),
-    #修改密码
-    path('password-change/', PasswordChangeView.as_view(template_name='registration/password_change_form.html'), name='password_change'),
+    #修改资料
+    path('edit_profile/<int:user_id>/', edit_profile, name='edit_profile'),
 ]

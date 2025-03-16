@@ -6,6 +6,16 @@ from .models import CustomUser
 from .forms import CustomUserCreationForm,IntroductionForm  # 导入自定义表单
 from django.http import Http404
 from xyq_files.models import Entry
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import ChangeUsernameForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash  # 用于保持用户登录状态
+from .forms import ChangeUsernameForm, IntroductionForm
+from django.contrib.auth.forms import PasswordChangeForm
+from .models import CustomUser
+
 
 
 def register(request):
@@ -31,26 +41,47 @@ def introduction(request,user_id):
     user=CustomUser.objects.get(id=user_id)
     entries = Entry.objects.all()
     context ={'user1': user,'entries':entries}
-    return render(request,'registration/introduction.html',context)
+    return render(request,'introduction/introduction.html',context)
 
-def edit_introduction(request, user_id):
+@login_required
+def edit_profile(request, user_id):
     # 获取当前用户对象
-    user = CustomUser.objects.get(id=user_id)
+    user = get_object_or_404(CustomUser, id=user_id)
+    
+    # 确保当前登录用户只能修改自己的资料
     if request.user != user:
         raise Http404
 
+    # 初始化三个表单
+    username_form = ChangeUsernameForm(instance=user)
+    introduction_form = IntroductionForm(instance=user)
+    password_form = PasswordChangeForm(user=user)
+
     if request.method == 'POST':
-        # 如果是 POST 请求，处理表单数据
-        form = IntroductionForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()  # 保存修改
-            return redirect('users:introduction', user_id=user.id)  # 重定向到用户个人主页
-    else:
-        # 如果是 GET 请求，显示表单
-        form = IntroductionForm(instance=user)
+        # 根据提交的按钮判断是哪个表单提交的
+        if 'change_username' in request.POST:
+            username_form = ChangeUsernameForm(request.POST, instance=user)
+            if username_form.is_valid():
+                username_form.save()
+                return redirect('users:edit_profile', user_id=user.id)
+        
+        elif 'change_introduction' in request.POST:
+            introduction_form = IntroductionForm(request.POST, instance=user)
+            if introduction_form.is_valid():
+                introduction_form.save()
+                return redirect('users:edit_profile', user_id=user.id)
+        
+        elif 'change_password' in request.POST:
+            password_form = PasswordChangeForm(user=user, data=request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)  # 保持用户登录状态
+                return redirect('users:edit_profile', user_id=user.id)
 
     # 渲染模板
-    return render(request, 'registration/edit_introduction.html', {
-        'form': form,
+    return render(request, 'introduction/edit_profile.html', {
+        'username_form': username_form,
+        'introduction_form': introduction_form,
+        'password_form': password_form,
         'user': user,
     })

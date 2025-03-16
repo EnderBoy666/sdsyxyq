@@ -26,3 +26,13 @@ class IntroductionForm(forms.ModelForm):
                 'placeholder': '请输入您的个人简介...',  # 添加占位符
             }),
         }
+class ChangeUsernameForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username']
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if CustomUser.objects.filter(username=username).exists():
+            raise forms.ValidationError("该用户名已被使用，请选择其他用户名。")
+        return username

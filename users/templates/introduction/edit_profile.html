@@ -1,0 +1,44 @@
+<!-- edit_profile.html -->
+{% extends 'xyq_files/base.html' %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+    <h1>编辑个人资料</h1>
+{% endblock page_header %}
+
+{% block content %}
+<!-- 修改用户名的表单 -->
+<h3>修改用户名</h3>
+<form method="post">
+    {% csrf_token %}
+    {% bootstrap_form username_form %}
+        {% buttons %}
+            <button name="change_username" class="btn btn-primary">保存用户名</button>
+        {% endbuttons %}
+</form>
+
+<hr>
+
+<!-- 修改简介的表单 -->
+<h3>修改简介</h3>
+<form method="post">
+    {% csrf_token %}
+    {% bootstrap_form introduction_form %}
+        {% buttons %}
+            <button name="change_introduction" class="btn btn-primary">保存简介</button>
+        {% endbuttons %}
+</form>
+
+<hr>
+
+<!-- 修改密码的表单 -->
+<h3>修改密码</h3>
+<form method="post">
+    {% csrf_token %}
+    {% bootstrap_form password_form %}
+        {% buttons %}
+            <button name="change_password" class="btn btn-primary">保存密码</button>
+        {% endbuttons %}
+</form>
+
+{% endblock %}

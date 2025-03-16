@@ -3,7 +3,6 @@
 
 {% block page_header %}
     <h1>{{ user1 }}</h1>
-    <a href="{% url 'users:password_change' %}">修改密码</a>
 {% endblock page_header %}
 
 {% block content %}
@@ -11,8 +10,8 @@
         <div class="card mb-3">
             <h5 class="card-header">简介：
                 {% if user.username == user1.username %}
-                    <a href="{% url 'users:edit_introduction' user1.id %}" class="btn btn-primary btn-sm">
-                        修改简介
+                    <a href="{% url 'users:edit_profile' user.id %}" class="btn btn-primary btn-sm">
+                        修改资料
                     </a>
                 {% endif %}
             </h5>
