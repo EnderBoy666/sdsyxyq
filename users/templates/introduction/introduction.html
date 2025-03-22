@@ -30,7 +30,7 @@
         <div class="card mb-3">
             <h6 class="card-header">
                 <a href="{% url 'users:introduction' entry.owner.id %}" >{{ entry.owner }}</a> : 
-                <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复</a>
+                <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复（{{entry.reply_count}}）</a>
                 <p style="font-size: 12px;">
                     {{ entry.date_added|date:'M d, y H:i'}}
                 </p>

@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>未读消息</h1>
-<a href="{% url 'xyq_files:mark_all_as_read' %}" class="btn btn-primary btn-sm">标记所有为已读</a>
+<p><a href="{% url 'xyq_files:mark_all_as_read' %}" class="btn btn-primary btn-sm">标记所有为已读</a></p>
 <ul>
     {% for message in unread_messages %}
     <li>

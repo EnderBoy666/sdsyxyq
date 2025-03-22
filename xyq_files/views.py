@@ -18,9 +18,12 @@ def topic(request,topic_id):
     """显示单个主题的所有条目"""
     topic =Topic.objects.get(id=topic_id)
     entries = topic.entry_set.order_by('-date_added')
+    for entry in entries:
+        entry.reply_count = entry.reply_set.count()
     context ={'topic': topic,'entries': entries}
     return render(request,'xyq_files/topic.html',context)
 
+@login_required
 def new_entry(request,topic_id):
     """在特定板块中添加新条目"""
     topic = Topic.objects.get(id=topic_id)
@@ -50,6 +53,7 @@ def entry(request,entry_id):
     context = {'entry':entry,'replies':replies}
     return render(request,'xyq_files/entry.html',context)
 
+@login_required
 def new_reply(request,entry_id):
     """给特定帖子评论"""
     entry = Entry.objects.get(id=entry_id)

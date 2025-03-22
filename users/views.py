@@ -32,9 +32,12 @@ def register(request):
     context = {'form': form}
     return render(request, 'registration/register.html', context)
 
+@login_required
 def introduction(request,user_id):
     user=CustomUser.objects.get(id=user_id)
     entries = Entry.objects.all()
+    for entry in entries:
+        entry.reply_count = entry.reply_set.count()
     context ={'user1': user,'entries':entries}
     return render(request,'introduction/introduction.html',context)
 
