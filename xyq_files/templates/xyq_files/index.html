@@ -4,6 +4,9 @@
         <h1 class="display-3">欢迎来到师大实验校园墙！</h1>
 
         <p class="lead">站主&制作人：刻靖</p>
+        <p style="font-size: 12px;">
+            版本：1.8
+        </p>
         {% if user.is_authenticated %}
             <a class="btn btn-lg btn-primary" href="{% url 'xyq_files:topics' %}"
                 role="button">进入 &raquo;</a>
@@ -25,7 +28,7 @@
     <div id="countdown" class="center-text"></div>
     <script>
     // 目标日期
-    var targetDate = new Date("2025-06-16T00:00:00");
+    var targetDate = new Date("2025-06-17T00:00:00");
     
     // 更新倒计时
     function updateCountdown() {
