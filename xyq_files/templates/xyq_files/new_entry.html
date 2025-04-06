@@ -1,5 +1,6 @@
 {% extends "xyq_files/base.html" %}
 {% load bootstrap4 %}
+{% load static %}
 
 {% block content %}
     {% if topic.id == 3 %}
@@ -8,13 +9,32 @@
         <p><a href="{% url 'xyq_files:topic' topic.id %}">{{ topic }}</a></p>
 
         <p>发消息：</p>
-        <form action="{% url 'xyq_files:new_entry' topic.id %}" method='post'>
+        <form action="{% url 'xyq_files:new_entry' topic.id %}" method='post' id="entry-form">
             {% csrf_token %}
             {% bootstrap_form form %}
-                {% buttons %}
-                    <button name="submit" class="btn btn-primary">发送</button>
-                {% endbuttons %}
+            
+            <div class="form-group position-relative">
+                <label for="user-search">@用户(可选):</label>
+                <input type="text" class="form-control" id="user-search" placeholder="搜索用户..." autocomplete="off">
+                <div id="user-results" class="dropdown-menu" style="
+                    display: none;
+                    position: absolute;
+                    left: 0;
+                    top: 100%;
+                    width: 100%;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    background: white;
+                    border: 1px solid #ced4da;
+                    z-index: 1000;
+                "></div>
+            </div>
+            
+            {% buttons %}
+                <button name="submit" class="btn btn-primary">发送</button>
+            {% endbuttons %}
         </form>
     {% endif %}
 
+    <script src="{% static 'js/user_search.js' %}"></script>
 {% endblock content %}

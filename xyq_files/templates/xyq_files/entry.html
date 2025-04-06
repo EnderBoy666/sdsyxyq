@@ -14,11 +14,21 @@
     <ul>
         {% for reply in replies %}
             <div class="card mb-3">
-                <h5 class="card-header">
-                    <a href="{% url 'users:introduction' reply.owner.id %}">{{ reply.owner }}:</a>
-                    <p style="font-size: 12px;">
-                        {{ reply.date_added|date:'M d, Y h:i'}}
-                    </p>
+                
+                <h5 class="card-header d-flex justify-content-between align-items-start">
+                    <div>
+                        <a href="{% url 'users:introduction' reply.owner.id %}">{{ reply.owner }}:</a>
+                        <p style="font-size: 12px;">
+                            {{ reply.date_added|date:'M d, Y h:i'}}
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        {% if reply.receiver %}
+                            <span class="badge bg-secondary me-2">
+                                @<a href="{% url 'users:introduction' reply.receiver.id %}" class="text-white">{{ reply.receiver }}</a>
+                            </span>
+                        {% endif %}
+                    </div>
                 </h5>
                 <div class="card-body">
                     {{ reply.text|linebreaks }}

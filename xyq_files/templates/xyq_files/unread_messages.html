@@ -7,15 +7,31 @@
     {% for message in unread_messages %}
     <li>
         <div class="card mb-3">
-            <h5 class="card-header">
-                <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
+            <h5 class="card-header d-flex justify-content-between align-items-start">
+                {% if message.entry and message.entry.id %}
+                    <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
+                {% else %}
+                    <span>{{ message.topic }}</span>
+                {% endif %}
             </h5>
-            <h5 class="card-header">
-                
-                <a href="{% url 'users:introduction' message.owner.id %}">{{ message.owner }}:</a>
+            <h5 class="card-header d-flex justify-content-between align-items-start">
+                <div>
+                {% if message.owner and message.owner.id %}
+                    <div><a href="{% url 'users:introduction' message.owner.id %}">{{ message.owner }}:</a></div>
+                {% else %}<div>
+                    <div><span>系统:</span></div>
+                {% endif %}
                 <p style="font-size: 12px;">
                     {{ message.date_added|date:'M d, Y h:i'}}
                 </p>
+                </div>
+                <div class="d-flex align-items-center">
+                    {% if message.receiver %}
+                        <span class="badge bg-secondary me-2">
+                            @<a href="{% url 'users:introduction' message.receiver.id %}" class="text-white">{{ message.receiver }}</a>
+                        </span>
+                    {% endif %}
+                </div>
             </h5>
             <div class="card-body">
                 {{ message.text|linebreaks }}
@@ -28,4 +44,3 @@
 </ul>
 <p><a href="{% url 'xyq_files:all_messages' %}">查看更早的消息</a></p>
 {% endblock %}
-

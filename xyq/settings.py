@@ -28,6 +28,53 @@ if os.environ.get('DEBUG') == 'TRUE':
     DEBUG=True
 else:
     DEBUG=False
+# 当DEBUG设置为False时Django报错，通常是由于以下几个常见原因：
+# 1. ALLOWED_HOSTS设置不正确：Django要求在生产环境中明确指定允许访问的主机。
+# 2. 静态文件配置问题：在生产环境中，需要正确配置静态文件的处理。
+# 3. CSRF_TRUSTED_ORIGINS设置：如果应用使用了跨域请求，需要配置信任的源。
+
+# 以下是一些可能的解决方案：
+
+# 1. 检查ALLOWED_HOSTS设置
+# 确保ALLOWED_HOSTS包含你的生产环境域名或IP地址。
+# 例如：
+# ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com', '127.0.0.1']
+
+# 2. 静态文件配置
+# 确保静态文件的收集和存储配置正确。
+# 例如，在settings.py中添加以下配置：
+# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# 3. CSRF_TRUSTED_ORIGINS设置
+# 如果应用使用了跨域请求，确保CSRF_TRUSTED_ORIGINS包含你的生产环境域名。
+# 例如：
+# CSRF_TRUSTED_ORIGINS = ['https://yourdomain.com']
+
+# 4. 错误日志记录
+# 在settings.py中配置日志记录，以便更好地调试错误。
+# 例如：
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'ERROR',
+#             'class': 'logging.FileHandler',
+#             'filename': 'error.log',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file'],
+#             'level': 'ERROR',
+#             'propagate': True,
+#         },
+#     },
+# }
+
+# 请根据具体的错误信息进行排查和修复。如果问题仍然存在，请提供详细的错误信息，以便进一步诊断。
 
 ALLOWED_HOSTS = ['*']
 
@@ -132,7 +179,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

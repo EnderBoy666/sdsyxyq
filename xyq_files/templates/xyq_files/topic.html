@@ -25,18 +25,27 @@
     <ul>
     {% for entry in entries %}
         <div class="card mb-3">
-            <h4 class="card-header">
-                <a href="{% url 'users:introduction' entry.owner.id %}">{{ entry.owner }}</a> : 
-                    
-                <small></small><small><small>
-                    <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复（{{entry.reply_count}}）</a>
-                </small></small></small></small>
-                <p style="font-size: 12px;">
-                    {{ entry.date_added|date:'M d, y H:i'}}
-                </p>
-                </h4>
-                <div class="card-body">
-                    {{ entry.text|linebreaks }}
+            <h4 class="card-header d-flex justify-content-between align-items-start">
+                <div>
+                    <a href="{% url 'users:introduction' entry.owner.id %}">{{ entry.owner }}</a> : 
+                        
+                    <small></small><small><small>
+                        <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复（{{entry.reply_count}}）</a>
+                    </small></small></small></small>
+                    <p style="font-size: 12px;">
+                        {{ entry.date_added|date:'M d, y H:i'}}
+                    </p>
+                </div>
+                <div class="d-flex align-items-center">
+                    {% if entry.receiver %}
+                        <span class="badge bg-secondary me-2">
+                            @<a href="{% url 'users:introduction' entry.receiver.id %}" class="text-white">{{ entry.receiver }}</a>
+                        </span>
+                    {% endif %}
+                </div>
+            </h4>
+            <div class="card-body">
+                {{ entry.text|linebreaks }}
             </div>
         </div>
     {% empty %}

@@ -1,7 +1,10 @@
 from django.shortcuts import render,redirect
-from .models import Topic,Entry,Reply
+from .models import Topic,Entry,Reply,CustomUser
 from .forms import EntryForm,ReplyForm
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+from itertools import chain
 
 # Create your views here.
 def index(request):
@@ -24,27 +27,34 @@ def topic(request,topic_id):
     return render(request,'xyq_files/topic.html',context)
 
 @login_required
-def new_entry(request,topic_id):
+def new_entry(request, topic_id):
     """在特定板块中添加新条目"""
     topic = Topic.objects.get(id=topic_id)
 
     if request.method != 'POST':
-        #未提交数据，创建一个空表单
         form = EntryForm()
-
     else:
-        #post提交的数据：对数据进行处理
         form = EntryForm(data=request.POST)
         if form.is_valid():
             new_entry = form.save(commit=False)
             new_entry.topic = topic
             new_entry.owner = request.user
             new_entry.save()
-            return redirect('xyq_files:topic',topic_id = topic_id)
-        
-    #显示空表单或指出表单数据无效
-    context={'topic':topic,'form':form}
-    return render(request,'xyq_files/new_entry.html',context)
+            return redirect('xyq_files:topic', topic_id=topic_id)
+    
+    context = {'topic': topic, 'form': form}
+    return render(request, 'xyq_files/new_entry.html', context)
+
+@login_required
+def search_users(request):
+    """搜索用户的AJAX视图"""
+    query = request.GET.get('q', '')
+    users = get_user_model().objects.filter(
+        username__icontains=query
+    ).exclude(id=request.user.id)[:10]  # 排除当前用户，限制10个结果
+    
+    results = [{'id': user.id, 'username': user.username} for user in users]
+    return JsonResponse(results, safe=False)
 
 def entry(request,entry_id):
     """显示单个条目的所有回复"""
@@ -54,27 +64,32 @@ def entry(request,entry_id):
     return render(request,'xyq_files/entry.html',context)
 
 @login_required
-def new_reply(request,entry_id):
+def new_reply(request, entry_id):
     """给特定帖子评论"""
     entry = Entry.objects.get(id=entry_id)
 
     if request.method != 'POST':
-        #未提交数据，创建一个空表单
         form = ReplyForm()
-
     else:
-        #post提交的数据：对数据进行处理
         form = ReplyForm(data=request.POST)
         if form.is_valid():
             new_reply = form.save(commit=False)
             new_reply.entry = entry
-            new_reply.owner = request.user 
+            new_reply.owner = request.user
+            
+            # 处理receiver字段
+            if 'receiver' in request.POST and request.POST['receiver']:
+                try:
+                    receiver_id = int(request.POST['receiver'])
+                    new_reply.receiver = CustomUser.objects.get(id=receiver_id)  # 直接使用CustomUser
+                except (ValueError, CustomUser.DoesNotExist):
+                    pass
+            
             new_reply.save()
-            return redirect('xyq_files:entry',entry_id = entry_id)
-        
-    #显示空表单或指出表单数据无效
-    context={'entry':entry,'form':form}
-    return render(request,'xyq_files/new_reply.html',context)
+            return redirect('xyq_files:entry', entry_id=entry_id)
+    
+    context = {'entry': entry, 'form': form}
+    return render(request, 'xyq_files/new_reply.html', context)
 
 #下载文件
 import os
@@ -96,33 +111,45 @@ def download(request):
 @login_required
 def unread_messages(request):
     # 获取当前用户的未读消息
-    unread_reply = Reply.objects.filter(entry__owner=request.user, is_read=False)
-    unread_reply = unread_reply.order_by('-date_added')
-    return render(request, 'xyq_files/unread_messages.html', {'unread_messages':unread_reply})
+
+    unread_entries = Entry.objects.filter(receiver=request.user, is_read=False)
+    unread_replies = Reply.objects.filter(entry__owner=request.user, is_read=False)
+    unread_replies1 = Reply.objects.filter(receiver=request.user, is_read=False)
+
+    combined_unread = list(unread_entries) + list(unread_replies) + list(unread_replies1)
+    return render(request, 'xyq_files/unread_messages.html', {'unread_messages':combined_unread})
 
 
 @login_required
 def some_view(request):
     # 获取当前用户的未读消息数量
-    unread_count = Reply.objects.filter(entry__owner=request.user, is_read=False).count()
+    unread_entries = Entry.objects.filter(receiver=request.user, is_read=False).count()
+    unread_replies = Reply.objects.filter(entry__owner=request.user, is_read=False).count()
+    unread_replies1 = Reply.objects.filter(receiver=request.user, is_read=False).count()
+
+    unread_count = unread_entries + unread_replies + unread_replies1
     print(unread_count)
     # 将未读消息数量传递给模板
     return render(request, 'xyq_files/base.html', {'unread_count': unread_count})
 
 @login_required
 def mark_all_as_read(request):
-    # 获取当前用户的所有未读消息
-    unread_messages = Reply.objects.filter(entry__owner=request.user, is_read=False)
-    
     # 将所有未读消息标记为已读
-    unread_messages.update(is_read=True)
+    Entry.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+    
+    # 标记Reply中的未读消息
+    Reply.objects.filter(entry__owner=request.user, is_read=False).update(is_read=True)
+    Reply.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
     
     # 重定向到消息列表页面
     return redirect('xyq_files:unread_messages')
 
 @login_required
 def all_messages(request):
-    # 获取当前用户的未读消息
-    reply = Reply.objects.filter(entry__owner=request.user)
-    reply = reply.order_by('-date_added')
-    return render(request, 'xyq_files/all_messages.html', {'all_messages':reply})
+    # 获取当前用户的所有消息
+    entries = Entry.objects.filter(receiver=request.user).order_by('-date_added')
+    replies = Reply.objects.filter(entry__owner=request.user).order_by('-date_added')
+    replies1 = Reply.objects.filter(receiver=request.user, is_read=False).order_by('-date_added')
+
+    message = list(entries) + list(replies) + list(replies1)
+    return render(request, 'xyq_files/all_messages.html', {'all_messages':message})

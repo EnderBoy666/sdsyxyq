@@ -1,16 +1,25 @@
 {% extends "xyq_files/base.html" %}
 {% load bootstrap4 %}
+{% load static %}
 
 {% block content %}
     <p><a href="{% url 'xyq_files:entry' entry.id %}">{{ entry }}</a></p>
     
     <p>发送评论</p>
-    <form action="{% url 'xyq_files:new_reply' entry.id %}" method="post">
+    <form action="{% url 'xyq_files:new_reply' entry.id %}" method="post" id="reply-form">
         {% csrf_token %}
         {% bootstrap_form form %}
+        
+        <div class="form-group position-relative">
+            <label for="reply-user-search">@用户(可选):</label>
+            <input type="text" class="form-control" id="reply-user-search" placeholder="搜索用户..." autocomplete="off">
+            <div id="reply-user-results" class="dropdown-menu" style="display:none; width:100%;"></div>
+        </div>
+        
         {% buttons %}
             <button name="submit" class="btn btn-primary">发送</button>
         {% endbuttons %}
     </form>
 
+    <script src="{% static 'js/reply_user_search.js' %}"></script>
 {% endblock content %}
