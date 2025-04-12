@@ -1,0 +1,18 @@
+{% extends 'xyq_files/base.html' %}
+
+{% block title %}添加好友{% endblock %}
+
+{% block content %}
+<h2>添加好友</h2>
+{% if prefilled_username %}
+<div class="alert alert-info">
+    你将向 <strong>{{ prefilled_username }}</strong> 发送好友请求
+</div>
+{% endif %}
+<form method="post" class="mt-3">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">发送好友请求</button>
+    <a href="{% url 'users:friend_list' %}" class="btn btn-secondary">取消</a>
+</form>
+{% endblock %}

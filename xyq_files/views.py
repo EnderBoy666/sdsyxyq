@@ -1,10 +1,12 @@
 from django.shortcuts import render,redirect
 from .models import Topic,Entry,Reply,CustomUser
+from users.models import PrivateMessage
 from .forms import EntryForm,ReplyForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from itertools import chain
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
@@ -121,35 +123,95 @@ def unread_messages(request):
 
 
 @login_required
-def some_view(request):
-    # 获取当前用户的未读消息数量
-    unread_entries = Entry.objects.filter(receiver=request.user, is_read=False).count()
-    unread_replies = Reply.objects.filter(entry__owner=request.user, is_read=False).count()
-    unread_replies1 = Reply.objects.filter(receiver=request.user, is_read=False).count()
-
-    unread_count = unread_entries + unread_replies + unread_replies1
-    print(unread_count)
-    # 将未读消息数量传递给模板
-    return render(request, 'xyq_files/base.html', {'unread_count': unread_count})
+def unread_messages(request):
+    # 获取所有类型的未读消息
+    unread_entries = Entry.objects.filter(receiver=request.user, is_read=False).order_by('-date_added')
+    unread_replies_to_entries = Reply.objects.filter(entry__owner=request.user, is_read=False).order_by('-date_added')
+    unread_replies_to_user = Reply.objects.filter(receiver=request.user, is_read=False).order_by('-date_added')
+    unread_private_messages = PrivateMessage.objects.filter(receiver=request.user, is_read=False).order_by('-timestamp')
+    
+    # 获取消息类型参数
+    message_type = request.GET.get('type', 'all')
+    
+    # 根据类型过滤消息
+    if message_type == 'entries':
+        messages = list(unread_entries)
+    elif message_type == 'replies_to_entries':
+        messages = list(unread_replies_to_entries)
+    elif message_type == 'replies_to_user':
+        messages = list(unread_replies_to_user)
+    elif message_type == 'private':
+        messages = list(unread_private_messages)
+    else:
+        messages = list(unread_entries) + list(unread_replies_to_entries) + list(unread_replies_to_user) + list(unread_private_messages)
+    
+    return render(request, 'xyq_files/unread_messages.html', {
+        'unread_messages': messages,
+        'current_type': message_type,
+        'unread_counts': {
+            'all': len(list(unread_entries)) + len(list(unread_replies_to_entries)) + len(list(unread_replies_to_user)) + len(list(unread_private_messages)),
+            'entries': unread_entries.count(),
+            'replies_to_entries': unread_replies_to_entries.count(),
+            'replies_to_user': unread_replies_to_user.count(),
+            'private': unread_private_messages.count(),
+        }
+    })
 
 @login_required
 def mark_all_as_read(request):
-    # 将所有未读消息标记为已读
-    Entry.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+    # 获取类型参数
+    message_type = request.GET.get('type', 'all')
     
-    # 标记Reply中的未读消息
-    Reply.objects.filter(entry__owner=request.user, is_read=False).update(is_read=True)
-    Reply.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+    # 根据类型标记为已读
+    if message_type == 'entries' or message_type == 'all':
+        Entry.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
     
-    # 重定向到消息列表页面
-    return redirect('xyq_files:unread_messages')
+    if message_type == 'replies_to_entries' or message_type == 'all':
+        Reply.objects.filter(entry__owner=request.user, is_read=False).update(is_read=True)
+    
+    if message_type == 'replies_to_user' or message_type == 'all':
+        Reply.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+    
+    if message_type == 'private' or message_type == 'all':
+        PrivateMessage.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+    
+    # 重定向回未读消息页面，保持当前筛选类型
+    redirect_url = reverse('xyq_files:unread_messages')
+    if message_type != 'all':
+        redirect_url += f'?type={message_type}'
+    return redirect(redirect_url)
 
 @login_required
 def all_messages(request):
-    # 获取当前用户的所有消息
+    # 获取所有类型的消息
     entries = Entry.objects.filter(receiver=request.user).order_by('-date_added')
-    replies = Reply.objects.filter(entry__owner=request.user).order_by('-date_added')
-    replies1 = Reply.objects.filter(receiver=request.user, is_read=False).order_by('-date_added')
-
-    message = list(entries) + list(replies) + list(replies1)
-    return render(request, 'xyq_files/all_messages.html', {'all_messages':message})
+    replies_to_entries = Reply.objects.filter(entry__owner=request.user).order_by('-date_added')
+    replies_to_user = Reply.objects.filter(receiver=request.user).order_by('-date_added')
+    private_messages = PrivateMessage.objects.filter(receiver=request.user).order_by('-timestamp')
+    
+    # 获取消息类型参数
+    message_type = request.GET.get('type', 'all')
+    
+    # 根据类型过滤消息
+    if message_type == 'entries':
+        messages = list(entries)
+    elif message_type == 'replies_to_entries':
+        messages = list(replies_to_entries)
+    elif message_type == 'replies_to_user':
+        messages = list(replies_to_user)
+    elif message_type == 'private':
+        messages = list(private_messages)
+    else:
+        messages = list(entries) + list(replies_to_entries) + list(replies_to_user) + list(private_messages)
+    
+    return render(request, 'xyq_files/all_messages.html', {
+        'all_messages': messages,
+        'current_type': message_type,
+        'message_counts': {
+            'all': entries.count() + replies_to_entries.count() + replies_to_user.count() + private_messages.count(),
+            'entries': entries.count(),
+            'replies_to_entries': replies_to_entries.count(),
+            'replies_to_user': replies_to_user.count(),
+            'private': private_messages.count(),
+        }
+    })

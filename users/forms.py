@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from .models import CustomUser
+from .models import PrivateMessage
 
 # 获取自定义用户模型
 User = get_user_model()
@@ -36,3 +37,18 @@ class ChangeUsernameForm(forms.ModelForm):
         if CustomUser.objects.filter(username=username).exists():
             raise forms.ValidationError("该用户名已被使用，请选择其他用户名。")
         return username
+
+class FriendRequestForm(forms.Form):
+    username = forms.CharField(label='用户名', max_length=150)
+
+class PrivateMessageForm(forms.ModelForm):
+    class Meta:
+        model = PrivateMessage
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': '输入消息内容...'
+            })
+        }

@@ -3,8 +3,22 @@
 
 {% block page_header %}
     <h1>{{ user1 }}</h1>
-    {% if user.username == user1.username %}
-        <a href="{% url 'xyq_files:unread_messages' %}" class="btn btn-primary btn-sm">查看消息</a>
+    {% if is_own_profile %}
+        <div class="btn-group">
+            <a href="{% url 'xyq_files:unread_messages' %}" class="btn btn-primary btn-sm">查看消息</a>
+            <a href="{% url 'users:friend_list' %}" class="btn btn-info btn-sm">好友列表</a>
+            <a href="{% url 'users:pending_requests' %}" class="btn btn-warning btn-sm">好友请求</a>
+        </div>
+    {% else %}
+        {# 他人主页显示好友关系状态 #}
+        {% if is_friend %}
+            <span class="badge bg-success">已是好友</span>
+            <a href="{% url 'users:chat_with_friend' user1.id %}" class="btn btn-primary btn-sm">发消息</a>
+        {% elif friend_request_sent %}
+            <span class="badge bg-warning text-dark">好友请求已发送</span>
+        {% else %}
+            <a href="{% url 'users:send_friend_request' %}?username={{ user1.username }}" class="btn btn-success btn-sm">加好友</a>
+        {% endif %}
     {% endif %}
 {% endblock page_header %}
 
@@ -12,9 +26,8 @@
     <ul>
         <div class="card mb-3">
             <h5 class="card-header">简介：
-                {% if user.username == user1.username %}
-                    
-                    <a href="{% url 'users:edit_profile' user.id %}" class="btn btn-primary btn-sm">
+                {% if is_own_profile %}
+                    <a href="{% url 'users:edit_profile' user1.id %}" class="btn btn-primary btn-sm">
                         修改资料
                     </a>
                 {% endif %}
@@ -24,6 +37,55 @@
             </div>
         </div>
     </ul>
+
+    {# 自己的主页显示好友列表 #}
+    {% if is_own_profile %}
+        <div class="card mb-4">
+            <h5 class="card-header">我的好友 ({{ friends|length }})</h5>
+            <div class="card-body">
+                {% if friends %}
+                    <div class="list-group">
+                        {% for friend in friends %}
+                            <a href="{% url 'users:introduction' friend.id %}" class="list-group-item list-group-item-action">
+                                {{ friend.username }}
+                                <span class="float-end">
+                                    <a href="{% url 'users:chat_with_friend' friend.id %}" class="btn btn-sm btn-outline-primary">私聊</a>
+                                </span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">你还没有好友，快去添加吧！</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <h5 class="card-header">待处理的好友请求</h5>
+            <div class="card-body">
+                {% if pending_requests %}
+                    <div class="list-group">
+                        {% for request in pending_requests %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    {{ request.from_user.username }} 想添加你为好友
+                                    <small class="text-muted">{{ request.created_at|timesince }}前</small>
+                                </span>
+                                <div>
+                                    <a href="{% url 'users:accept_friend_request' request.id %}" class="btn btn-sm btn-success">接受</a>
+                                    <a href="{% url 'users:reject_friend_request' request.id %}" class="btn btn-sm btn-danger">拒绝</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">没有待处理的好友请求</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {# 用户发布的消息 #}
     <h2>{{user1}}发的消息：</h2>
     {% for entry in entries %}
         {% if entry.owner == user1 %}

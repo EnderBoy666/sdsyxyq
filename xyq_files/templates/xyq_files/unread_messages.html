@@ -2,45 +2,85 @@
 
 {% block content %}
 <h1>未读消息</h1>
-<p><a href="{% url 'xyq_files:mark_all_as_read' %}" class="btn btn-primary btn-sm">标记所有为已读</a></p>
-<ul>
+
+<!-- 消息分类按钮 -->
+<div class="btn-group mb-3" role="group">
+    <a href="?type=all" class="btn btn-{% if current_type == 'all' %}primary{% else %}outline-secondary{% endif %}">
+        全部 <span class="badge bg-danger">{{ unread_counts.all }}</span>
+    </a>
+    <a href="?type=entries" class="btn btn-{% if current_type == 'entries' %}primary{% else %}outline-secondary{% endif %}">
+        条目 <span class="badge bg-danger">{{ unread_counts.entries }}</span>
+    </a>
+    <a href="?type=replies_to_entries" class="btn btn-{% if current_type == 'replies_to_entries' %}primary{% else %}outline-secondary{% endif %}">
+        回复我的条目 <span class="badge bg-danger">{{ unread_counts.replies_to_entries }}</span>
+    </a>
+    <a href="?type=replies_to_user" class="btn btn-{% if current_type == 'replies_to_user' %}primary{% else %}outline-secondary{% endif %}">
+        直接回复我 <span class="badge bg-danger">{{ unread_counts.replies_to_user }}</span>
+    </a>
+    <a href="?type=private" class="btn btn-{% if current_type == 'private' %}primary{% else %}outline-secondary{% endif %}">
+        私聊 <span class="badge bg-danger">{{ unread_counts.private }}</span>
+    </a>
+</div>
+
+<!-- 标记为已读按钮 -->
+<p>
+    <a href="{% url 'xyq_files:mark_all_as_read' %}?type={{ current_type }}" class="btn btn-primary btn-sm">
+        标记当前类型为已读
+    </a>
+    <a href="{% url 'xyq_files:mark_all_as_read' %}" class="btn btn-danger btn-sm">
+        标记所有为已读
+    </a>
+</p>
+
+<!-- 消息列表 -->
+<ul class="list-unstyled">
     {% for message in unread_messages %}
-    <li>
-        <div class="card mb-3">
-            <h5 class="card-header d-flex justify-content-between align-items-start">
-                {% if message.entry and message.entry.id %}
-                    <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
-                {% else %}
-                    <span>{{ message.topic }}</span>
-                {% endif %}
-            </h5>
-            <h5 class="card-header d-flex justify-content-between align-items-start">
+    <li class="mb-3">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                {% if message.owner and message.owner.id %}
-                    <div><a href="{% url 'users:introduction' message.owner.id %}">{{ message.owner }}:</a></div>
-                {% else %}<div>
-                    <div><span>系统:</span></div>
-                {% endif %}
-                <p style="font-size: 12px;">
-                    {{ message.date_added|date:'M d, Y h:i'}}
-                </p>
-                </div>
-                <div class="d-flex align-items-center">
-                    {% if message.receiver %}
-                        <span class="badge bg-secondary me-2">
-                            @<a href="{% url 'users:introduction' message.receiver.id %}" class="text-white">{{ message.receiver }}</a>
-                        </span>
+                    <!-- 私聊消息的特殊显示 -->
+                    {% if message.sender %}
+                        <a href="{% url 'users:introduction' message.sender.id %}">{{ message.sender }}</a>
+                        <span class="text-muted small">(私聊)</span>
+                    <!-- 普通消息显示 -->
+                    {% else %}
+                        {% if message.entry and message.entry.id %}
+                            <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
+                        {% else %}
+                            <span>{{ message.topic }}</span>
+                        {% endif %}
                     {% endif %}
                 </div>
-            </h5>
+                <span class="text-muted small">
+                    {{ message.date_added|date:'M d, Y h:i'|default:message.timestamp|date:'M d, Y h:i' }}
+                </span>
+            </div>
             <div class="card-body">
-                {{ message.text|linebreaks }}
+                {% if message.sender %}
+                    <!-- 私聊消息内容 -->
+                    <div class="d-flex justify-content-between">
+                        <div>{{ message.content|linebreaks }}</div>
+                        <a href="{% url 'users:chat_with_friend' message.sender.id %}" class="btn btn-sm btn-outline-primary ms-3">回复</a>
+                    </div>
+                {% else %}
+                    <!-- 普通消息内容 -->
+                    {{ message.text|linebreaks }}
+                    {% if message.owner %}
+                        <div class="mt-2">
+                            <a href="{% url 'users:introduction' message.owner.id %}" class="btn btn-sm btn-outline-secondary">
+                                {{ message.owner }}的主页
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </li>
     {% empty %}
-    <li>暂时没有新消息哦~~</li>
+    <li class="alert alert-info">暂时没有未读消息哦~~</li>
     {% endfor %}
 </ul>
+
 <p><a href="{% url 'xyq_files:all_messages' %}">查看更早的消息</a></p>
 {% endblock %}

@@ -2,31 +2,84 @@
 
 {% block content %}
 <h1>全部消息</h1>
-<ul>
+
+<!-- 消息分类按钮 -->
+<div class="btn-group mb-3" role="group">
+    <a href="?type=all" class="btn btn-{% if current_type == 'all' %}primary{% else %}outline-secondary{% endif %}">
+        全部 <span class="badge bg-secondary">{{ message_counts.all }}</span>
+    </a>
+    <a href="?type=entries" class="btn btn-{% if current_type == 'entries' %}primary{% else %}outline-secondary{% endif %}">
+        条目 <span class="badge bg-secondary">{{ message_counts.entries }}</span>
+    </a>
+    <a href="?type=replies_to_entries" class="btn btn-{% if current_type == 'replies_to_entries' %}primary{% else %}outline-secondary{% endif %}">
+        回复我的条目 <span class="badge bg-secondary">{{ message_counts.replies_to_entries }}</span>
+    </a>
+    <a href="?type=replies_to_user" class="btn btn-{% if current_type == 'replies_to_user' %}primary{% else %}outline-secondary{% endif %}">
+        直接回复我 <span class="badge bg-secondary">{{ message_counts.replies_to_user }}</span>
+    </a>
+    <a href="?type=private" class="btn btn-{% if current_type == 'private' %}primary{% else %}outline-secondary{% endif %}">
+        私聊 <span class="badge bg-secondary">{{ message_counts.private }}</span>
+    </a>
+</div>
+
+<!-- 消息列表 -->
+<ul class="list-unstyled">
     {% for message in all_messages %}
-    <li>
-        <div class="card mb-3">
-            <h5 class="card-header">
-                {% if message.entry and message.entry.id %}
-                    <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
-                {% else %}
-                    <span>{{ message.topic }}</span>
-                {% endif %}
-            </h5>
-            <h5 class="card-header">
-                
-                <a href="{% url 'users:introduction' message.owner.id %}">{{ message.owner }}:</a>
-                <p style="font-size: 12px;">
-                    {{ message.date_added|date:'M d, Y h:i'}}
-                </p>
-            </h5>
+    <li class="mb-3">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center {% if not message.is_read %}bg-light-warning{% endif %}">
+                <div>
+                    {% if message.sender %}
+                        <!-- 私聊消息头部 -->
+                        <a href="{% url 'users:introduction' message.sender.id %}">{{ message.sender }}</a>
+                        <span class="text-muted small">(私聊)</span>
+                    {% else %}
+                        <!-- 普通消息头部 -->
+                        {% if message.entry and message.entry.id %}
+                            <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
+                        {% else %}
+                            <span>{{ message.topic|default:"系统消息" }}</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div>
+                    <span class="text-muted small">
+                        {# 根据消息类型显示不同的时间字段 #}
+                        {% if message.sender %}
+                            {{ message.timestamp|date:'M d, Y h:i' }}
+                        {% else %}
+                            {{ message.date_added|date:'M d, Y h:i' }}
+                        {% endif %}
+                    </span>
+                    {% if not message.is_read %}
+                        <span class="badge bg-danger ms-2">未读</span>
+                    {% endif %}
+                </div>
+            </div>
+            
             <div class="card-body">
-                {{ message.text|linebreaks }}
+                {% if message.sender %}
+                    <!-- 私聊消息内容 -->
+                    <div class="d-flex justify-content-between">
+                        <div>{{ message.content|linebreaks }}</div>
+                        <a href="{% url 'users:chat_with_friend' message.sender.id %}" class="btn btn-sm btn-outline-primary ms-3">回复</a>
+                    </div>
+                {% else %}
+                    <!-- 普通消息内容 -->
+                    {{ message.text|linebreaks }}
+                    {% if message.owner %}
+                        <div class="mt-2">
+                            <a href="{% url 'users:introduction' message.owner.id %}" class="btn btn-sm btn-outline-secondary">
+                                {{ message.owner }}的主页
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </li>
     {% empty %}
-    <li>暂时消息哦~~</li>
+    <li class="alert alert-info">暂时没有消息哦~~</li>
     {% endfor %}
 </ul>
 {% endblock %}
