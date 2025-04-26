@@ -1,5 +1,6 @@
 from .models import Entry, Reply
 from users.models import PrivateMessage  # 导入私聊消息模型
+from users.models import Friendship  # 导入好友关系模型
 
 def unread_count_processor(request):
     if request.user.is_authenticated:
@@ -16,19 +17,28 @@ def unread_count_processor(request):
             is_read=False
         ).count()
         
-        # 总未读数
+        # 未读好友申请计数
+        unread_friend_requests = Friendship.objects.filter(
+            to_user=request.user,
+            is_accepted=False
+        ).count()
+        
+        # 总未读数（包括所有类型）
         total_unread = (
             unread_entries + 
             unread_replies1 + 
             unread_replies2 + 
-            unread_private_messages
+            unread_private_messages +
+            unread_friend_requests
         )
         
         return {
             'unread_count': total_unread,
-            'unread_private_messages': unread_private_messages  # 单独暴露私聊未读数，可选
+            'unread_private_messages': unread_private_messages,
+            'unread_friend_requests': unread_friend_requests  # 单独暴露好友请求未读数
         }
     return {
         'unread_count': 0,
-        'unread_private_messages': 0
+        'unread_private_messages': 0,
+        'unread_friend_requests': 0
     }

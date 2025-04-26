@@ -20,6 +20,7 @@
     <a href="?type=private" class="btn btn-{% if current_type == 'private' %}primary{% else %}outline-secondary{% endif %}">
         私聊 <span class="badge bg-danger">{{ unread_counts.private }}</span>
     </a>
+
 </div>
 
 <!-- 标记为已读按钮 -->
@@ -39,25 +40,49 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <!-- 私聊消息的特殊显示 -->
-                    {% if message.sender %}
+                    {% if message.msg_type == 'friend_request' %}
+                        <!-- 好友请求消息 -->
+                        <a href="{% url 'users:introduction' message.from_user.id %}">{{ message.from_user }}</a>
+                        <span class="text-muted small">(好友请求)</span>
+                    {% elif message.sender %}
+                        <!-- 私聊消息 -->
                         <a href="{% url 'users:introduction' message.sender.id %}">{{ message.sender }}</a>
                         <span class="text-muted small">(私聊)</span>
-                    <!-- 普通消息显示 -->
                     {% else %}
+                        <!-- 普通消息 -->
                         {% if message.entry and message.entry.id %}
                             <a href="{% url 'xyq_files:entry' message.entry.id %}">{{ message.entry }}</a>
                         {% else %}
-                            <span>{{ message.topic }}</span>
+                            <span>{{ message.topic|default:"系统消息" }}</span>
                         {% endif %}
                     {% endif %}
                 </div>
                 <span class="text-muted small">
-                    {{ message.date_added|date:'M d, Y h:i'|default:message.timestamp|date:'M d, Y h:i' }}
+                    {# 根据消息类型显示不同的时间字段 #}
+                    {% if message.msg_type == 'friend_request' %}
+                        {{ message.created_at|date:'M d, Y h:i' }}
+                    {% elif message.date_added %}
+                        {{ message.date_added|date:'M d, Y h:i' }}
+                    {% elif message.timestamp %}
+                        {{ message.timestamp|date:'M d, Y h:i' }}
+                    {% endif %}
                 </span>
             </div>
+            
             <div class="card-body">
-                {% if message.sender %}
+                {% if message.msg_type == 'friend_request' %}
+                    <!-- 好友请求内容 -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p>{{ message.from_user.username }} 想添加你为好友</p>
+                            <div class="btn-group">
+                                <a href="{% url 'users:accept_friend_request' message.id %}" class="btn btn-sm btn-success">接受</a>
+                                <a href="{% url 'users:reject_friend_request' message.id %}" class="btn btn-sm btn-danger">拒绝</a>
+                            </div>
+                        </div>
+                        <a href="{% url 'users:introduction' message.from_user.id %}" class="btn btn-sm btn-outline-primary">查看主页</a>
+                    </div>
+                {% elif message.sender %}
                     <!-- 私聊消息内容 -->
                     <div class="d-flex justify-content-between">
                         <div>{{ message.content|linebreaks }}</div>

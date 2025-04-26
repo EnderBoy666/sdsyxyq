@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from .models import Topic,Entry,Reply,CustomUser
-from users.models import PrivateMessage
+from users.models import PrivateMessage,Friendship
 from .forms import EntryForm,ReplyForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -129,6 +129,7 @@ def unread_messages(request):
     unread_replies_to_entries = Reply.objects.filter(entry__owner=request.user, is_read=False).order_by('-date_added')
     unread_replies_to_user = Reply.objects.filter(receiver=request.user, is_read=False).order_by('-date_added')
     unread_private_messages = PrivateMessage.objects.filter(receiver=request.user, is_read=False).order_by('-timestamp')
+    unread_friend_requests = Friendship.objects.filter(to_user=request.user, is_accepted=False).order_by('-created_at')
     
     # 获取消息类型参数
     message_type = request.GET.get('type', 'all')
@@ -142,18 +143,57 @@ def unread_messages(request):
         messages = list(unread_replies_to_user)
     elif message_type == 'private':
         messages = list(unread_private_messages)
+    elif message_type == 'friend_requests':
+        messages = list(unread_friend_requests)
     else:
-        messages = list(unread_entries) + list(unread_replies_to_entries) + list(unread_replies_to_user) + list(unread_private_messages)
+        # 将所有消息合并，并添加类型标识和时间属性
+        messages = []
+        
+        # 条目消息
+        for msg in unread_entries:
+            msg.msg_type = 'entry'
+            msg.sort_time = msg.date_added
+            messages.append(msg)
+        
+        # 回复条目消息
+        for msg in unread_replies_to_entries:
+            msg.msg_type = 'reply_to_entry'
+            msg.sort_time = msg.date_added
+            messages.append(msg)
+        
+        # 直接回复用户消息
+        for msg in unread_replies_to_user:
+            msg.msg_type = 'reply_to_user'
+            msg.sort_time = msg.date_added
+            messages.append(msg)
+        
+        # 私聊消息
+        for msg in unread_private_messages:
+            msg.msg_type = 'private'
+            msg.sort_time = msg.timestamp
+            messages.append(msg)
+        
+        # 好友请求
+        for msg in unread_friend_requests:
+            msg.msg_type = 'friend_request'
+            msg.sort_time = msg.created_at
+            messages.append(msg)
+        
+        # 按时间排序
+        messages.sort(key=lambda x: x.sort_time, reverse=True)
     
     return render(request, 'xyq_files/unread_messages.html', {
         'unread_messages': messages,
         'current_type': message_type,
         'unread_counts': {
-            'all': len(list(unread_entries)) + len(list(unread_replies_to_entries)) + len(list(unread_replies_to_user)) + len(list(unread_private_messages)),
+            'all': (unread_entries.count() + unread_replies_to_entries.count() + 
+                   unread_replies_to_user.count() + unread_private_messages.count() +
+                   unread_friend_requests.count()),
             'entries': unread_entries.count(),
             'replies_to_entries': unread_replies_to_entries.count(),
             'replies_to_user': unread_replies_to_user.count(),
             'private': unread_private_messages.count(),
+            'friend_requests': unread_friend_requests.count(),
         }
     })
 
@@ -174,6 +214,11 @@ def mark_all_as_read(request):
     
     if message_type == 'private' or message_type == 'all':
         PrivateMessage.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+    
+    if message_type == 'friend_requests' or message_type == 'all':
+        # 好友请求标记为已读（接受或拒绝）
+        # 这里可以根据需求决定是否自动接受或拒绝
+        pass
     
     # 重定向回未读消息页面，保持当前筛选类型
     redirect_url = reverse('xyq_files:unread_messages')
