@@ -198,6 +198,14 @@
                         <div class="errorlist">{{ form.password2.errors }}</div>
                     {% endif %}
                 </div>
+                <!-- 验证码 -->
+                <div class="mb-3">
+                    <label for="{{ form.captcha.id_for_label }}" class="form-label">验证码</label>
+                    {{ form.captcha }}
+                    {% if form.captcha.errors %}
+                        <div class="errorlist">{{ form.captcha.errors }}</div>
+                    {% endif %}
+                </div>
                 <!-- 注册按钮 -->
                 <button type="submit" class="btn btn-primary">注册</button>
             </form>

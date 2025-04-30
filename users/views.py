@@ -264,3 +264,16 @@ def chat_with_friend(request, friend_id):
         'messages': messages,
         'form': form
     })
+
+from django.utils import timezone
+from .models import RequestLog
+
+def check_ban_ip(ip):
+    # 定义时间窗口，例如 60 秒
+    time_window = timezone.now() - timezone.timedelta(seconds=60)
+    # 获取 IP 在时间窗口内的请求记录
+    recent_requests = RequestLog.objects.filter(ip_address=ip, request_time__gte=time_window)
+    # 定义请求阈值，例如 100 次
+    request_threshold = 100
+    # 如果请求次数超过阈值，则返回 True 表示需要封禁
+    return recent_requests.count() > request_threshold

@@ -25,9 +25,9 @@ SECRET_KEY = 'django-insecure-^!qp3^zapydu^-2z*p_@z3j%awpqxo01evys3c#btmsh&=m*-@
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if os.environ.get('DEBUG') == 'TRUE':
-    DEBUG=True
+    DEBUG = True
 else:
-    DEBUG=False
+    DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -39,14 +39,15 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
-    #我的应用程序
+    # 我的应用程序
     'xyq_files',
     'users',
 
-    #第三方应用程序
+    # 第三方应用程序
     'bootstrap4',
+    'captcha',
 
-    #默认添加的应用程序
+    # 默认添加的应用程序
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -63,6 +64,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.middleware.RequestLimitMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 如果使用 Whitenoise 处理静态文件
 ]
 
 ROOT_URLCONF = 'xyq.urls'
@@ -134,25 +137,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',  # 必须放在 AuthenticationMiddleware 之前
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',  # 用户认证
-    'django.contrib.messages.middleware.MessageMiddleware',  # 消息框架,
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 如果使用 Whitenoise 处理静态文件
-]
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
@@ -167,4 +158,63 @@ BOOTSTRAP4 = {
     'css_url': {
         'url': '/static/bootstrap/css/bootstrap.min.css',
     },
+}
+
+import re
+
+# 定义过滤器类
+class FaviconFilter:
+    def filter(self, record):
+        # 检查日志消息是否包含对 /favicon.ico 的请求
+        return not re.search(r'"GET /favicon.ico HTTP/1.1"', record.getMessage())
+    
+# 日志配置
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'sdsyxyq.log'),
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'propagate': True,
+        },
+        'xyq_files': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'users': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
 }

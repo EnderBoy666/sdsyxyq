@@ -3,11 +3,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from .models import CustomUser
 from .models import PrivateMessage
+from captcha.fields import CaptchaField
 
 # 获取自定义用户模型
 User = get_user_model()
 
 class CustomUserCreationForm(UserCreationForm):
+    captcha = CaptchaField()  # 添加验证码字段
     class Meta:
         model = User  # 绑定到自定义用户模型
         fields = ('username','email','phone_number','password1', 'password2')  # 包含需要的字段

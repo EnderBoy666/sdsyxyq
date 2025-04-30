@@ -27,3 +27,23 @@ class PrivateMessage(models.Model):
     
     class Meta:
         ordering = ['timestamp']
+
+class RequestLog(models.Model):
+    ip_address = models.GenericIPAddressField()
+    request_time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.ip_address} - {self.request_time}"
+
+class BannedUser(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    ban_end_time = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.user.username} - Banned until {self.ban_end_time}"
+class BannedIP(models.Model):
+    ip_address = models.GenericIPAddressField()
+    ban_end_time = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.ip_address} - Banned until {self.ban_end_time}"
