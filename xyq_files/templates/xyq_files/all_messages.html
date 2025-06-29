@@ -61,12 +61,12 @@
                 {% if message.sender %}
                     <!-- 私聊消息内容 -->
                     <div class="d-flex justify-content-between">
-                        <div>{{ message.content|linebreaks }}</div>
+                        <div>{{ message.content|safe|linebreaks }}</div>
                         <a href="{% url 'users:chat_with_friend' message.sender.id %}" class="btn btn-sm btn-outline-primary ms-3">回复</a>
                     </div>
                 {% else %}
                     <!-- 普通消息内容 -->
-                    {{ message.text|linebreaks }}
+                    {{ message.text|safe|linebreaks }}
                     {% if message.owner %}
                         <div class="mt-2">
                             <a href="{% url 'users:introduction' message.owner.id %}" class="btn btn-sm btn-outline-secondary">

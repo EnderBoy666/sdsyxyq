@@ -260,3 +260,6 @@ def all_messages(request):
             'private': private_messages.count(),
         }
     })
+
+def eula(request):
+    return render(request,"about_us/EULA.html")

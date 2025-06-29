@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,10 +43,13 @@ INSTALLED_APPS = [
     # 我的应用程序
     'xyq_files',
     'users',
+    'user_level',
 
-    # 第三方应用程序
+    # 第三方应用程序（新增）
     'bootstrap4',
     'captcha',
+    'rest_framework',  # DRF
+    'corsheaders',     # CORS
 
     # 默认添加的应用程序
     'django.contrib.admin',
@@ -59,6 +63,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # 新增CORS中间件（需在CommonMiddleware之前）
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -93,13 +98,25 @@ WSGI_APPLICATION = 'xyq.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+# Database（修改为PostgreSQL配置）
+if os.environ.get('SJK') == 'TRUE':
+    DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django',       # 数据库名（需提前在PostgreSQL创建）
+        'USER': 'enderboy',       # 数据库用户
+        'PASSWORD': '531855771',   # 用户密码CLI工具
+        'HOST': '103.40.13.68',       # 数据库地址（如localhost或云数据库地址）
+        'PORT': '55555',               # 修正为PostgreSQL默认端口（原55555）
     }
 }
-
+else:
+   DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3', 
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -160,61 +177,9 @@ BOOTSTRAP4 = {
     },
 }
 
-import re
-
-# 定义过滤器类
-class FaviconFilter:
-    def filter(self, record):
-        # 检查日志消息是否包含对 /favicon.ico 的请求
-        return not re.search(r'"GET /favicon.ico HTTP/1.1"', record.getMessage())
-    
-# 日志配置
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'sdsyxyq.log'),
-            'formatter': 'verbose'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'propagate': True,
-        },
-        'xyq_files': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'users': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    }
-}
+# 新增CORS配置（文件末尾）
+CORS_ALLOWED_ORIGINS = [
+    'https://your-netlify-site.netlify.app',  # 替换为实际Netlify前端URL
+    'http://localhost:3000',  # 本地前端开发端口（如React默认3000）
+]
+CORS_ALLOW_CREDENTIALS = True  # 允许携带Cookie

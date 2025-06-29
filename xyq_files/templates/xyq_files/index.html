@@ -1,55 +1,156 @@
 {% extends "xyq_files/base.html" %}
+{% load static %}
+
 {% block page_header %}
-    <div class="jumbotron">
+    <div class="jumbotron text-center">
         <h1 class="display-3">欢迎来到师大实验校园墙！</h1>
 
         <p class="lead">站主&制作人：刻靖</p>
-        <p style="font-size: 12px;">
-            版本：1.10
-        </p>
+        <p class="text-muted small">版本：1.12</p>
+        
         {% if user.is_authenticated %}
-            <a class="btn btn-lg btn-primary" href="{% url 'xyq_files:topics' %}"
-                role="button">进入 &raquo;</a>
-            <a class="btn btn-lg btn-primary" href="{% url 'users:logout' %}"
-                role="button">登出 &raquo;</a>
+            <div class="mt-4">
+                <a class="btn btn-lg btn-primary mr-3" href="{% url 'xyq_files:topics' %}" role="button">
+                    <i class="fa fa-arrow-right mr-2"></i>进入校园墙
+                </a>
+                <a class="btn btn-lg btn-outline-secondary" href="{% url 'users:logout' %}" role="button">
+                    <i class="fa fa-sign-out mr-2"></i>登出
+                </a>
+            </div>
+            
+            <!-- 显示用户积分和等级 -->
+            <div class="mt-4 pt-3 border-top">
+                <div class="d-inline-block p-3 bg-light rounded">
+                    <span class="font-weight-bold">用户等级：</span>
+                    <span class="badge badge-primary text-white text-lg">{{ user.level }}</span>
+                    <span class="font-weight-bold ml-4">积分：</span>
+                    <span class="text-success">{{ user.points }}</span>
+                    <span class="font-weight-bold ml-4">连续签到：</span>
+                    <span class="text-warning">{{ user.consecutive_check_in_days }}天</span>
+                    
+                    <!-- 签到按钮 -->
+                    <button id="check-in-btn" class="btn btn-sm btn-warning ml-4">
+                        <i class="fa fa-calendar-check-o mr-1"></i> 今日签到
+                    </button>
+                </div>
+            </div>
+            
         {% else %}
-            <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}"
-                role="button">注册 &raquo;</a>
-            <a class="btn btn-lg btn-primary" href="{% url 'users:login' %}"
-                role="button">登录 &raquo;</a>
+            <div class="mt-4">
+                <a class="btn btn-lg btn-primary mr-3" href="{% url 'users:register' %}" role="button">
+                    <i class="fa fa-user-plus mr-2"></i>注册
+                </a>
+                <a class="btn btn-lg btn-outline-primary" href="{% url 'users:login' %}" role="button">
+                    <i class="fa fa-sign-in mr-2"></i>登录
+                </a>
+            </div>
         {% endif %}
-        <div id="datetime">
-            <script>
-                setInterval("document.getElementById('datetime').innerHTML=new Date().toLocaleString();", 1000);
-            </script>
+        
+        <!-- 日期时间显示 -->
+        <div class="mt-4 text-muted">
+            <i class="fa fa-calendar-o mr-2"></i>
+            <span id="current-datetime">{{ current_datetime|date:"Y-m-d H:i:s" }}</span>
         </div>
     </div>
-    <p align="center">中考倒计时：</p>
-    <div id="countdown" class="center-text"></div>
-    <script>
-    // 目标日期
-    var targetDate = new Date("2025-06-17T00:00:00");
-    
-    // 更新倒计时
-    function updateCountdown() {
-        var now = new Date();
-        var timeLeft = targetDate - now;
-    
-        // 计算剩余的天、小时、分钟和秒
-        var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-    
-        // 更新页面上的倒计时显示
-        document.getElementById("countdown").innerHTML = days + "天 " + hours + "小时 " + minutes + "分钟 " + seconds + "秒";
-    
-        // 每秒钟更新一次倒计时
-        setTimeout(updateCountdown, 1000);
+<style>
+    #exam-countdown {
+        font-size: 4vw; /* 使用视口宽度单位，使字体大小随屏幕宽度变化 */
     }
+    @media (max-width: 768px) { /* 当屏幕宽度小于等于768px时 */
+        #exam-countdown {
+            font-size: 6vw; /* 增大字体大小 */
+        }
+    }
+</style>
+    <!-- 中考倒计时 -->
+    <div class="text-center py-4 bg-info text-white mb-4">
+        <script src="{% static 'js/countdown.js' %}"></script>
+        <h4>中考倒计时</h4>
+        <div id="exam-countdown" class="display-4 font-weight-bold"></div>
+    <script src="{% static 'js/countdown.js' %}"></script>
     
-    // 启动倒计时
-    updateCountdown();
-    </script>
-    
+    <!-- 签到功能JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化倒计时
+            initCountdown('exam-countdown', '2025-06-17T00:00:00');
+            initDateTime('current-datetime');
+            
+            // 签到按钮逻辑
+            const checkInBtn = document.getElementById('check-in-btn');
+            if (checkInBtn) {
+                checkInBtn.addEventListener('click', function() {
+                    // 显示加载状态
+                    checkInBtn.disabled = true;
+                    checkInBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> 签到中...';
+                    
+                    // 发送签到请求
+                    fetch("{% url 'user_level:daily_check_in' %}", {
+
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // 更新界面显示
+                            checkInBtn.classList.remove('btn-warning');
+                            checkInBtn.classList.add('btn-success');
+                            checkInBtn.innerHTML = '<i class="fa fa-check mr-1"></i> 已签到';
+                            
+                            // 更新积分和连续签到天数
+                            document.querySelector('.text-success').textContent = data.data.points;
+                            document.querySelector('.text-warning').textContent = data.data.consecutive_days + '天';
+                            
+                            // 显示成功消息
+                            showNotification('success', data.message);
+                        } else {
+                            // 显示错误消息
+                            showNotification('error', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('签到请求失败:', error);
+                        showNotification('error', '签到失败，请稍后再试');
+                    })
+                    .finally(() => {
+                        checkInBtn.disabled = false;
+                    });
+                });
+            }
+        });
+        
+        // 显示通知消息
+        function showNotification(type, message) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded shadow-lg z-50 transition-all duration-300 transform translate-x-full ${
+                type === 'success' ? 'bg-success text-white' : 'bg-danger text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fa ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // 显示通知
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // 自动关闭
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+            initCountdown('exam-countdown', "2026-06-17T00:00:00");
+        </script>
+    </div>
 {% endblock page_header %}

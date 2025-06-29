@@ -26,7 +26,15 @@
         <div class="card mb-3">
             <h4 class="card-header d-flex justify-content-between align-items-start">
                 <div>
-                    <a href="{% url 'users:introduction' entry.owner.id %}">{{ entry.owner }}</a> : 
+                    <a href="{% url 'users:introduction' entry.owner.id %}">{{ entry.owner }}</a> 
+                    <span class="badge 
+                        {% if entry.owner.level == 1 %}bg-primary text-white{% endif %}
+                        {% if entry.owner.level == 2 %}bg-success text-white{% endif %}
+                        {% if entry.owner.level == 3 %}bg-warning text-dark{% endif %}
+                        {% if entry.owner.level == 4 %}bg-danger text-white{% endif %}
+                        {% if entry.owner.level >= 5 %}bg-dark text-white{% endif %}">
+                        等级{{ entry.owner.level }}
+                    </span> : 
                         
                     <small></small><small><small>
                         <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复（{{entry.reply_count}}）</a>
@@ -44,7 +52,7 @@
                 </div>
             </h4>
             <div class="card-body">
-                {{ entry.text|linebreaks }}
+                <p>{{ entry.text|safe|linebreaks }}</p>
             </div>
         </div>
     {% empty %}

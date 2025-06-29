@@ -15,13 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
+from django.views.generic import RedirectView  # 新增导入
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/',include('users.urls')),
-    path('',include('xyq_files.urls')),
+    path('users/', include('users.urls')),
+    path('user_level/', include('user_level.urls')),
+    path('', include('xyq_files.urls')),
     path('captcha/', include('captcha.urls')),
     path('password-change-done/', PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'), name='password_change_done'),
+    path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),  # 新增favicon重定向
 ]

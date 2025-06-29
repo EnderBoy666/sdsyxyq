@@ -1,5 +1,5 @@
 from django.contrib import admin
-from users.models import Friendship, PrivateMessage
+from users.models import Friendship, PrivateMessage,CustomUser
 
 # Register your models here.
 @admin.register(Friendship)
@@ -51,4 +51,33 @@ class PrivateMessageAdmin(admin.ModelAdmin):
     def short_content(self, obj):
         return obj.content[:50] + '...' if len(obj.content) > 50 else obj.content
     short_content.short_description = '内容摘要'
-    
+
+@admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
+    # 显示的字段列表
+    list_display = ('username', 'email', 'phone_number', 'points', 'level', 'last_check_in', 'consecutive_check_in_days', 'is_staff')
+# 编辑表单中显示的字段集
+fieldsets = (
+    (None, {'fields': ('username', 'password')}),
+    ('个人信息', {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'introduction')}),
+    ('权限', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+    ('积分与等级', {'fields': ('points', 'level', 'last_check_in', 'consecutive_check_in_days')}),
+    ('重要日期', {'fields': ('last_login', 'date_joined')}),
+)
+
+# 添加用户表单中显示的字段
+add_fieldsets = (
+    (None, {
+        'classes': ('wide',),
+        'fields': ('username', 'password1', 'password2', 'email', 'phone_number', 'points', 'level'),
+    }),
+)
+
+# 可搜索的字段
+search_fields = ('username', 'email', 'phone_number')
+
+# 可过滤的字段
+list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'level')
+
+# 排序方式
+ordering = ('-date_joined',)

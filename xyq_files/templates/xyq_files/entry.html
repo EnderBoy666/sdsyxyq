@@ -17,7 +17,15 @@
                 
                 <h5 class="card-header d-flex justify-content-between align-items-start">
                     <div>
-                        <a href="{% url 'users:introduction' reply.owner.id %}">{{ reply.owner }}:</a>
+                        <a href="{% url 'users:introduction' reply.owner.id %}">{{ reply.owner }}</a>
+                        <span class="badge 
+                            {% if reply.owner.level == 1 %}bg-primary text-white{% endif %}
+                            {% if reply.owner.level == 2 %}bg-success text-white{% endif %}
+                            {% if reply.owner.level == 3 %}bg-warning text-dark{% endif %}
+                            {% if reply.owner.level == 4 %}bg-danger text-white{% endif %}
+                            {% if reply.owner.level >= 5 %}bg-dark text-white{% endif %}">
+                            等级{{ reply.owner.level }}
+                        </span> :
                         <p style="font-size: 12px;">
                             {{ reply.date_added|date:'M d, Y h:i'}}
                         </p>
@@ -31,7 +39,7 @@
                     </div>
                 </h5>
                 <div class="card-body">
-                    {{ reply.text|linebreaks }}
+                    {{ reply.text|safe|linebreaks }}
                 </div>
             </div>
         {% empty %}

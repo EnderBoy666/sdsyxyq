@@ -1,5 +1,6 @@
 {% extends "xyq_files/base.html" %}
 {% load bootstrap4 %}
+{% load user_level_tags %}
 
 {% block page_header %}
     <h1>{{ user1 }}</h1>
@@ -33,7 +34,20 @@
                 {% endif %}
             </h5>
             <div class="card-body">
-                {{ user1.introduction }}
+                {{ user1.introduction|safe|linebreaks }}
+                <!-- 等级与积分进度条 -->
+                <div class="mt-3">
+                    <p>等级: {{ user1.level }}</p>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: 0%;" 
+                             aria-valuenow="{{ user1.points }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="{{ user1.level|get_max_points }}">
+                            {{ user1.points }} / {{ user1.level|get_max_points }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </ul>
@@ -86,23 +100,52 @@
     {% endif %}
 
     {# 用户发布的消息 #}
-    <h2>{{user1}}发的消息：</h2>
+    <h2>{{ user1 }}发的消息：</h2>
     {% for entry in entries %}
         {% if entry.owner == user1 %}
         <div class="card mb-3">
             <h6 class="card-header">
                 <a href="{% url 'users:introduction' entry.owner.id %}" >{{ entry.owner }}</a> : 
-                <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复（{{entry.reply_count}}）</a>
+                <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复（{{ entry.reply_count }}）</a>
                 <p style="font-size: 12px;">
                     {{ entry.date_added|date:'M d, y H:i'}}
                 </p>
                 </h6>
                 <div class="card-body">
-                    {{ entry.text|linebreaks }}
+                    {{ entry.text|safe|linebreaks }}
             </div>
         </div>
         {% endif %}
     {% empty %}
         <p>该用户还没发过消息哦~~</p>
     {% endfor %}
+
+    <!-- 进度条初始化脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取进度条元素
+            const progressBar = document.querySelector('.progress-bar');
+            
+            if (!progressBar) {
+                console.error('无法找到进度条元素');
+                return;
+            }
+            
+            // 从元素属性中获取积分数据
+            const userPoints = parseFloat(progressBar.getAttribute('aria-valuenow'));
+            const maxPoints = parseFloat(progressBar.getAttribute('aria-valuemax'));
+            
+            // 验证数据有效性
+            if (isNaN(userPoints) || isNaN(maxPoints) || maxPoints <= 0) {
+                console.error('积分数据无效:', userPoints, maxPoints);
+                return;
+            }
+            
+            // 计算百分比并设置进度条宽度
+            const percentage = Math.min(100, (userPoints / maxPoints) * 100);
+            progressBar.style.width = `${percentage}%`;
+            
+            console.log(`进度条已设置为 ${percentage}% (${userPoints}/${maxPoints})`);
+        });
+    </script>
 {% endblock content %}

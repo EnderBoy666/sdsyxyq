@@ -1,0 +1,101 @@
+{% extends "xyq_files/base.html" %}
+
+{% block page_header %}
+    <div class="page-header">
+        <h2>用户须知</h2>
+    </div>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="eula-container">
+        <section class="terms-section">
+            <h3>一、一些声明</h3>
+            <div class="terms-content">
+                <p>1.1.本服务条款（以下简称“本条款”）适用于您访问或使用本服务（以下简称“服务”）。本条款是本服务的全部条款，包括但不限于本条款中任何条款的修改。您同意本条款的全部条款。您在使用本服务前，请务必仔细阅读本条款。如果您不同意本条款的全部条款，您则不能使用本服务。</p>
+                <p>1.2.本网站并非学校官方网站，仅为学生提供信息服务。学校官网请见<a href="http://39.129.8.11:81/" class="official-link">云南师大实验中学官方网站</a></p>
+                <p>1.3.服务内容:请确保您已经了解我们提供的具体服务内容，并明确您使用该服务的目的和方式。如果您对服务内容有任何疑问，请随时与我们联系。</p>
+                <p>1.4.用户义务:作为用户，您有责任妥善使用我们的服务，不得从事任何违法、不道德或损害他人利益的行为。您不得以任何方式破坏、干扰或尝试破坏、干扰我们的服务或系统的正常运行。</p>
+                <p>1.5.隐私政策:在使用我们的服务时，您可能需要提供个人信息。我们将严格遵守相关法律法规并保护您的个人信息安全。详细了解我们的隐私政策，请参阅相关页面。</p>
+                <p>1.6.服务条款变更:我们可能会根据法律规定或业务需要对本服务条款进行变更。变更后的条款将在本页面上公布，并生效。您继续使用本服务即视为同意变更后的条款。</p>
+                <p>1.7.免责声明:我们将竭尽努力为您提供准确、及时、安全的服务，但不保证服务的质量和可靠性。对于由于您的操作失误、技术故障或其他原因导致的任何损失，我们将不承担责任。</p>
+                <p>1.8.服务变更与终止:我们有权根据实际情况对服务内容进行调整和优化，并可能在必要时终止或暂停服务。如果有任何变更，我们会尽力提前通知您。</p>
+            </div>
+        </section>
+
+        <section class="rules-section">
+            <h3>二、校园墙墙规</h3>
+            <div class="rules-content">
+                <ul class="rules-list">
+                    <li>2.1.禁止刷屏，注册小号或水军等行为。</li>
+                    <li>2.2.禁止发布黄色，暴力等违规内容！</li>
+                    <li>2.3.禁止发布广告、推广其他网站、软件、服务等。</li>
+                    <li>2.4.禁止发布违反法律法规的内容。</li>
+                    <li>2.5.禁止发布任何形式的政治、宗教、社会歧视、性别歧视、种族歧视、年龄歧视、性取向歧视等内容。</li>
+                </ul>
+                <div class="warning-note">
+                    <strong>违者视情节严重性进行处理！！！</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="closing-section">
+            <h4>感谢您的使用与支持</h4>
+            <p class="creator-info">制作人：刻靖</p>
+        </section>
+    </div>
+
+    <style>
+        .eula-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .terms-section, .rules-section, .closing-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .terms-content p, .rules-content li {
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .rules-list {
+            padding-left: 20px;
+        }
+        .rules-list li {
+            list-style-type: decimal;
+        }
+        .warning-note {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            font-weight: bold;
+        }
+        .official-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .official-link:hover {
+            text-decoration: underline;
+        }
+        .closing-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .creator-info {
+            font-style: italic;
+            color: #6c757d;
+        }
+        @media (max-width: 768px) {
+            .eula-container {
+                padding: 15px 10px;
+            }
+            h3 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+{% endblock content %}

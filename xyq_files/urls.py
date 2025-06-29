@@ -32,4 +32,6 @@ urlpatterns = [
     path('all_messages',views.all_messages,name='all_messages'),
     #搜索用户
     path('search_users/', views.search_users, name='search_users'),
+    #用户须知
+    path('EULA/',views.eula,name='EULA'),
 ]

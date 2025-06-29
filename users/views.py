@@ -2,7 +2,7 @@ from django.contrib.auth import login
 from django.contrib.auth import get_user_model
 from .models import CustomUser
 from .forms import CustomUserCreationForm,IntroductionForm  # 导入自定义表单
-from django.http import Http404
+from django.http import Http404, request
 from xyq_files.models import Entry
 from django.contrib.auth.decorators import login_required
 from .forms import ChangeUsernameForm

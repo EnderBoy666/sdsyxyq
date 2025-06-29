@@ -8,6 +8,14 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     introduction = models.CharField(max_length=400, blank=True, default='这个家伙很懒，还没有添加简介~~')
 
+    # 积分和等级字段
+    points = models.PositiveIntegerField(default=0, verbose_name='用户积分')
+    level = models.PositiveSmallIntegerField(default=1, verbose_name='用户等级')
+
+    # 签到相关字段
+    last_check_in = models.DateTimeField(null=True, blank=True, verbose_name='上次签到时间')
+    consecutive_check_in_days = models.PositiveIntegerField(default=0, verbose_name='连续签到天数')    
+
 class Friendship(models.Model):
     from_user = models.ForeignKey(CustomUser, related_name='friendship_requests_sent', on_delete=models.CASCADE)
     to_user = models.ForeignKey(CustomUser, related_name='friendship_requests_received', on_delete=models.CASCADE)
