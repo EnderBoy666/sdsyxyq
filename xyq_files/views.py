@@ -263,3 +263,7 @@ def all_messages(request):
 
 def eula(request):
     return render(request,"about_us/EULA.html")
+
+def about_us(request):
+    return render(request,"about_us/about_us.html")
+

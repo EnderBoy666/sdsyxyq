@@ -10,7 +10,6 @@
 <head>
     <style>
         html, body {
-            height: 100%;
             min-height: 100vh;
             margin: 0;
         }
@@ -31,11 +30,32 @@
         .footer {
             /* 移除fixed定位，使用默认static定位 */
             width: 100%;
-            height: 50px;
-            line-height: 50px;
+            height: auto; /* 改为自动高度适应内容 */
+            padding: 15px 0;
             background-color: #f8f9fa;
             border-top: 1px solid #e7e7e7;
             margin-top: 20px; /* 添加顶部外边距，与内容保持距离 */
+        }
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* 窄屏垂直间距 */
+            padding-left: 15px; /* 窄屏左对齐 */
+        }
+        @media (min-width: 768px) {
+            .footer-links {
+                flex-direction: row;
+                justify-content: center; /* 宽屏居中对齐 */
+                gap: 20px; /* 宽屏水平间距 */
+                padding-left: 0; /* 移除左侧内边距 */
+            }
+        }
+        .footer-links a {
+            color: #000000; /* 保持黑色文本 */
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
         }
     </style>
     <meta charset="utf-8">
@@ -103,8 +123,11 @@
         </div>
     </main>
     <footer class="footer">
-        <div class="container text-center">
-            <h8><a href="{% url 'xyq_files:EULA' %}">关于我们</a></h8>
+        <div class="container">
+            <div class="footer-links">
+                <a href="{% url 'xyq_files:EULA' %}">用户须知</a>
+                <a href="{% url 'xyq_files:about_us' %}">关于我们</a>
+            </div>
         </div>
     </footer>
 </body>

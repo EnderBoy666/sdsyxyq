@@ -1,0 +1,34 @@
+{% extends "xyq_files/base.html" %}
+
+{% block page_header %}
+    <script>
+    function copyToClipboard(text) {
+    if (navigator.clipboard) {
+        // 现代浏览器支持的Clipboard API
+        navigator.clipboard.writeText(text)
+        .then(() => alert('复制成功！'))
+        .catch(err => console.error('复制失败:', err));
+    } else {
+        // 传统方法作为备选
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('复制成功！');
+    }
+    }
+    </script>
+    <div class="page-header">
+
+        <h2>关于我们</h2>
+        <h3>1.简介</h3>
+        <h5>这是一个方便个学生聊天的平台，用户可以在上面发布自己的问题，其他用户可以对其进行回复。大家也可以在这里互相交流，分享自己的学习经验。</h5>
+        <h3>2.联系我们</h3>
+        <h5>微信视屏号搜索<span style="color: rgb(66, 164, 255); cursor: pointer; text-decoration: underline;" onclick="copyToClipboard('sdsy校园墙')">sdsy校园墙</span></h5>
+        <h5>QQ群：<a href="https://qm.qq.com/q/dQdNu7YB9e">云南sdsy校园墙qq群</a></h5>
+        <h5>新功能许愿池：<a href="http://127.0.0.1:8000/topics/4/">点击传送</a></h5>
+
+    </div>
+{% endblock page_header %}

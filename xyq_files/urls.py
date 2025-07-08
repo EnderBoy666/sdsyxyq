@@ -34,4 +34,5 @@ urlpatterns = [
     path('search_users/', views.search_users, name='search_users'),
     #用户须知
     path('EULA/',views.eula,name='EULA'),
+    path('about_us/',views.about_us,name='about_us'),
 ]
