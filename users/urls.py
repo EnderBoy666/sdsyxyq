@@ -9,7 +9,7 @@ from .views import edit_profile
 app_name='users'
 urlpatterns = [
     #包含默认身份信息验证URL
-    path('',include('django.contrib.auth.urls')),
+    path('', include('django.contrib.auth.urls')),
     #注册页面
     path('register/',views.register,name='register'),
     #个人主页
@@ -23,4 +23,5 @@ urlpatterns = [
     path('accept-request/<int:request_id>/', views.accept_friend_request, name='accept_friend_request'),
     path('reject-request/<int:request_id>/', views.reject_friend_request, name='reject_friend_request'),
     path('chat/<int:friend_id>/', views.chat_with_friend, name='chat_with_friend'),
+    path('accept-eula/', views.accept_eula, name='accept_eula'),  # 添加EULA确认路由
 ]

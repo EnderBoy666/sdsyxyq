@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载动画测试</title>
+    <link href="loading_spinner.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>加载动画测试</h1>
+    
+    <!-- 加载动画 -->
+    <div id="loadingSpinner" class="loading-overlay">
+        <div class="loadingspinner"> 
+            <div id="square1"></div> 
+            <div id="square2"></div> 
+            <div id="square3"></div> 
+            <div id="square4"></div> 
+            <div id="square5"></div> 
+        </div>
+    </div>
+    
+    <script>
+        // 页面加载完成后隐藏加载动画
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                if (loadingSpinner) {
+                    loadingSpinner.classList.add('hidden');
+                }
+            }, 3000); // 3秒后隐藏
+        });
+    </script>
+</body>
+</html>

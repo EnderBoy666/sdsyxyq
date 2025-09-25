@@ -267,3 +267,7 @@ def eula(request):
 def about_us(request):
     return render(request,"about_us/about_us.html")
 
+# 添加赞助页面视图
+def sponsor_us(request):
+    return render(request, "about_us/sponsor_us.html")
+

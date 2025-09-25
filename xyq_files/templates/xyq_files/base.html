@@ -1,6 +1,9 @@
 {% load static %}
 {% load bootstrap4 %}
 <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'css/loading_spinner.css' %}" rel="stylesheet">
+<link href="{% static 'css/card1.css' %}" rel="stylesheet">
+<link href="{% static 'css/card2.css' %}" rel="stylesheet">
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
@@ -12,6 +15,32 @@
         html, body {
             min-height: 100vh;
             margin: 0;
+        }
+        
+        /* 加载动画容器样式 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* 确保内容在加载动画下方 */
+        body > * {
+            position: relative;
+            z-index: 1;
         }
         body {
             background: linear-gradient(135deg, #ffffff, #e1f7fd);
@@ -101,7 +130,7 @@
                         <span class="navbar-text"><a href="{% url 'users:introduction' user.id %}">{{ user.username }}</a>, 欢迎来到校园墙。</span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'users:logout' %}">登出</a>
+                        <a class="nav-link" href="#" onclick="submitLogoutForm(event)">登出</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
@@ -114,6 +143,17 @@
             </ul>
         </div>
     </nav>
+    <!-- 加载动画 -->
+    <div id="loadingSpinner" class="loading-overlay">
+        <div class="loadingspinner"> 
+            <div id="square1"></div> 
+            <div id="square2"></div> 
+            <div id="square3"></div> 
+            <div id="square4"></div> 
+            <div id="square5"></div> 
+        </div>
+    </div>
+    
     <main role="main" class="container">
         <div class="pb-2 mb-2 border-bottom">
             {% block page_header %}{% endblock page_header %}
@@ -122,11 +162,53 @@
             {% block content %}{% endblock content %}
         </div>
     </main>
+    <form id="logoutForm" action="{% url 'users:logout' %}" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
+    <script>
+        function submitLogoutForm(event) {
+            event.preventDefault();
+            document.getElementById('logoutForm').submit();
+        }
+        
+        // 页面加载完成后隐藏加载动画
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                if (loadingSpinner) {
+                    loadingSpinner.classList.add('hidden');
+                }
+            }, 500); // 稍微延迟一下，让用户看到加载动画
+        });
+        
+        // 监听页面链接点击，显示加载动画
+        document.addEventListener('click', function(event) {
+            // 检查点击的是否是链接
+            const target = event.target.closest('a');
+            if (target && 
+                // 排除内部链接（以#开头的链接）
+                !target.getAttribute('href').startsWith('#') && 
+                // 排除JavaScript链接
+                !target.getAttribute('href').startsWith('javascript:') && 
+                // 排除在新标签页打开的链接
+                target.getAttribute('target') !== '_blank' &&
+                // 排除登出按钮
+                target.getAttribute('onclick') !== 'submitLogoutForm(event)') {
+                
+                // 显示加载动画
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                if (loadingSpinner) {
+                    loadingSpinner.classList.remove('hidden');
+                }
+            }
+        });
+    </script>
     <footer class="footer">
         <div class="container">
             <div class="footer-links">
                 <a href="{% url 'xyq_files:EULA' %}">用户须知</a>
                 <a href="{% url 'xyq_files:about_us' %}">关于我们</a>
+                <a href="{% url 'xyq_files:sponsor_us' %}">赞助我们</a>
             </div>
         </div>
     </footer>

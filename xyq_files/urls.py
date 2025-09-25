@@ -35,4 +35,6 @@ urlpatterns = [
     #用户须知
     path('EULA/',views.eula,name='EULA'),
     path('about_us/',views.about_us,name='about_us'),
+    # 添加赞助页面路由
+    path('sponsor_us/', views.sponsor_us, name='sponsor_us'),
 ]

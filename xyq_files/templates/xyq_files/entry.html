@@ -5,6 +5,7 @@
 {% endblock page_header %}
 
 {% block content %}
+    <div class="entry-page">
 
     <p>回复：</p>
     <p>
@@ -13,38 +14,41 @@
     </p>
     <ul>
         {% for reply in replies %}
-            <div class="card mb-3">
-                
-                <h5 class="card-header d-flex justify-content-between align-items-start">
-                    <div>
-                        <a href="{% url 'users:introduction' reply.owner.id %}">{{ reply.owner }}</a>
-                        <span class="badge 
-                            {% if reply.owner.level == 1 %}bg-primary text-white{% endif %}
-                            {% if reply.owner.level == 2 %}bg-success text-white{% endif %}
-                            {% if reply.owner.level == 3 %}bg-warning text-dark{% endif %}
-                            {% if reply.owner.level == 4 %}bg-danger text-white{% endif %}
-                            {% if reply.owner.level >= 5 %}bg-dark text-white{% endif %}">
-                            等级{{ reply.owner.level }}
-                        </span> :
-                        <p style="font-size: 12px;">
-                            {{ reply.date_added|date:'M d, Y h:i'}}
-                        </p>
+            <div class="card mb-3" style="width: 100%; height: auto;">
+                <div class="card-details">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <p class="text-title">
+                                <a href="{% url 'users:introduction' reply.owner.id %}">{{ reply.owner }}</a>
+                                <span class="badge 
+                                    {% if reply.owner.level == 1 %}bg-primary text-white{% endif %}
+                                    {% if reply.owner.level == 2 %}bg-success text-white{% endif %}
+                                    {% if reply.owner.level == 3 %}bg-warning text-dark{% endif %}
+                                    {% if reply.owner.level == 4 %}bg-danger text-white{% endif %}
+                                    {% if reply.owner.level >= 5 %}bg-dark text-white{% endif %}">
+                                    等级{{ reply.owner.level }}
+                                </span>
+                                <span style="font-size: 12px; display: block;">
+                                    {{ reply.date_added|date:'M d, Y h:i'}}
+                                </span>
+                            </p>
+                        </div>
+                        <div>
+                            {% if reply.receiver %}
+                                <span class="badge bg-secondary">
+                                    @<a href="{% url 'users:introduction' reply.receiver.id %}" class="text-white">{{ reply.receiver }}</a>
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="d-flex align-items-center">
-                        {% if reply.receiver %}
-                            <span class="badge bg-secondary me-2">
-                                @<a href="{% url 'users:introduction' reply.receiver.id %}" class="text-white">{{ reply.receiver }}</a>
-                            </span>
-                        {% endif %}
-                    </div>
-                </h5>
-                <div class="card-body">
-                    {{ reply.text|safe|linebreaks }}
+                    <p class="text-body">{{ reply.text|safe|linebreaks }}</p>
                 </div>
+                <a href="{% url 'xyq_files:new_reply' entry.id %}?receiver={{ reply.owner.id }}&username={{ reply.owner.username }}" class="card-button">回复</a>
             </div>
         {% empty %}
             <p>还没有评论呢~</p>
         {% endfor %}
     </ul>
 
+    </div>
 {% endblock content %}

@@ -90,7 +90,16 @@
                     </div>
                 {% else %}
                     <!-- 普通消息内容 -->
-                    {{ message.text|safe|linebreaks }}
+                    <div class="d-flex justify-content-between">
+                        <div>{{ message.text|safe|linebreaks }}</div>
+                        {% if message.msg_type == 'entry' and message.id %}
+                            <a href="{% url 'xyq_files:entry' message.id %}" class="btn btn-sm btn-outline-primary ms-3">回复</a>
+                        {% elif message.msg_type == 'reply_to_entry' and message.entry.id %}
+                            <a href="{% url 'xyq_files:entry' message.entry.id %}" class="btn btn-sm btn-outline-primary ms-3">回复</a>
+                        {% elif message.msg_type == 'reply_to_user' and message.entry.id %}
+                            <a href="{% url 'xyq_files:entry' message.entry.id %}" class="btn btn-sm btn-outline-primary ms-3">回复</a>
+                        {% endif %}
+                    </div>
                     {% if message.owner %}
                         <div class="mt-2">
                             <a href="{% url 'users:introduction' message.owner.id %}" class="btn btn-sm btn-outline-secondary">

@@ -18,7 +18,7 @@
                 <p>1.5.隐私政策:在使用我们的服务时，您可能需要提供个人信息。我们将严格遵守相关法律法规并保护您的个人信息安全。详细了解我们的隐私政策，请参阅相关页面。</p>
                 <p>1.6.服务条款变更:我们可能会根据法律规定或业务需要对本服务条款进行变更。变更后的条款将在本页面上公布，并生效。您继续使用本服务即视为同意变更后的条款。</p>
                 <p>1.7.免责声明:我们将竭尽努力为您提供准确、及时、安全的服务，但不保证服务的质量和可靠性。对于由于您的操作失误、技术故障或其他原因导致的任何损失，我们将不承担责任。</p>
-                <p>1.8.服务变更与终止:我们有权根据实际情况对服务内容进行调整和优化，并可能在必要时终止或暂停服务。如果有任何变更，我们会尽力提前通知您。</p>
+                <p>1.9.服务变更与终止:我们有权根据实际情况对服务内容进行调整和优化，并可能在必要时终止或暂停服务。如果有任何变更，我们会尽力提前通知您。</p>
             </div>
         </section>
 
@@ -42,6 +42,20 @@
             <h4>感谢您的使用与支持</h4>
             <p class="creator-info">制作人：刻靖</p>
         </section>
+
+        <div class="eula-accept-section">
+            <div class="alert alert-info" role="alert">
+                <strong>请注意：</strong> 您必须阅读并接受本用户须知才能继续使用网站全部功能。
+            </div>
+            <!-- 仅当用户未阅读EULA时显示确认按钮 -->
+            {% if user.is_authenticated and not user.EULA_read %}
+                <form method="post" action="{% url 'users:accept_eula' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.META.HTTP_REFERER }}">
+                    <button type="submit" class="btn btn-primary">确认阅读并同意</button>
+                </form>
+            {% endif %}
+        </div>
     </div>
 
     <style>

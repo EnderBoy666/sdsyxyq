@@ -4,12 +4,10 @@
     <script>
     function copyToClipboard(text) {
     if (navigator.clipboard) {
-        // 现代浏览器支持的Clipboard API
         navigator.clipboard.writeText(text)
         .then(() => alert('复制成功！'))
         .catch(err => console.error('复制失败:', err));
     } else {
-        // 传统方法作为备选
         const textarea = document.createElement('textarea');
         textarea.value = text;
         document.body.appendChild(textarea);
@@ -21,14 +19,115 @@
     }
     </script>
     <div class="page-header">
-
         <h2>关于我们</h2>
-        <h3>1.简介</h3>
-        <h5>这是一个方便个学生聊天的平台，用户可以在上面发布自己的问题，其他用户可以对其进行回复。大家也可以在这里互相交流，分享自己的学习经验。</h5>
-        <h3>2.联系我们</h3>
-        <h5>微信视屏号搜索<span style="color: rgb(66, 164, 255); cursor: pointer; text-decoration: underline;" onclick="copyToClipboard('sdsy校园墙')">sdsy校园墙</span></h5>
-        <h5>QQ群：<a href="https://qm.qq.com/q/dQdNu7YB9e">云南sdsy校园墙qq群</a></h5>
-        <h5>新功能许愿池：<a href="http://127.0.0.1:8000/topics/4/">点击传送</a></h5>
-
     </div>
 {% endblock page_header %}
+
+{% block content %}
+    <div class="eula-container">
+        <section class="terms-section">
+            <h3>一、简介</h3>
+            <div class="terms-content">
+                <p>这是一个方便学生聊天的平台，用户可以在上面发布自己的问题，其他用户可以对其进行回复。大家也可以在这里互相交流，分享自己的学习经验。</p>
+            </div>
+        </section>
+
+        <section class="terms-section">
+            <h3>二、联系我们</h3>
+            <div class="terms-content">
+                <p>微信视屏号搜索<span style="color: rgb(47, 155, 255); cursor: pointer; text-decoration: underline;" onclick="copyToClipboard('sdsy校园墙')">sdsy校园墙</span></p>
+                <p>QQ群：<a href="https://qm.qq.com/q/dQdNu7YB9e">云南sdsy校园墙qq群</a></p>
+                <p>新功能许愿池：<a href="http://127.0.0.1:8000/topics/4/">点击传送</a></p>
+            </div>
+        </section>
+
+        <section class="terms-section">
+            <h3>三、关于校园墙</h3>
+            <div class="terms-content">
+                <h4>3.1 关于个人信息</h4>
+                <p>注册时，我们将要求您提供用户名和密码，二者可以在注册时填写，也可以在个人中心（右上角导航栏点击名字->修改资料）进行修改。</p>
+                <p>注册时，您可以提供手机号或邮箱，也可以后续在个人中心进行修改。但由于技术限制，我们无法直接将手机号或邮箱与您的账户绑定，以及找回账户。</p>
+
+                <h4>3.2 关于积分</h4>
+                <p>积分的获取方式为签到或赞助，目前暂无具体用途，后续会慢慢添加。</p>
+                <p>积分等级制度如下：</p>
+                <ul style="padding-left: 20px;">
+                    <li>等级1：0-100分</li>
+                    <li>等级2：101-200分</li>
+                    <li>等级3：201-500分</li>
+                    <li>等级4：500-1000分</li>
+                    <li>等级5：1000分以上</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="terms-section">
+            <h3>四、关于赞助</h3>
+            <div class="terms-content">
+                <p>本网站并非以盈利为目的，您的赞助将用于维护服务器成本，以及后续功能的开发。</p>
+                <p>赞助将给予积分回馈，目前的比例为1:10，修改时将进行通知</p>
+            </div>
+        </section>
+
+        <section class="terms-section">
+            <h3>五、校园墙使用方法</h3>
+            <div class="terms-content">
+                <p>1. 积分在主页签到时获取</p>
+                <p>2. 修改资料在个人中心</p>
+                <p>3. 发帖时可以使用部分html中的格式符号，例如：</p>
+                <ul style="padding-left: 20px;">
+                    <li>&lt;b&gt; - 粗体文本</li>
+                    <li>&lt;i&gt; - 斜体文本</li>
+                    <li>&lt;u&gt; - 下划线文本</li>
+                    <li>&lt;br&gt; - 换行</li>
+                    <li>&lt;hr&gt; - 水平线</li>
+                    <li>&lt;p&gt; - 段落</li>
+                    <li>&lt;h1&gt;-&lt;h6&gt; - 标题层级</li>
+                    <li>&lt;ul&gt; - 无序列表</li>
+                    <li>&lt;ol&gt; - 有序列表</li>
+                    <li>&lt;li&gt; - 列表项</li>
+                    <li>&lt;a&gt; - 超链接</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="closing-section">
+            <h4>感谢您的使用与支持</h4>
+        </section>
+    </div>
+
+    <style>
+        .eula-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .terms-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .terms-content p, .terms-content li {
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .terms-content h4 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .closing-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+        @media (max-width: 768px) {
+            .eula-container {
+                padding: 15px 10px;
+            }
+            h3 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+{% endblock content %}

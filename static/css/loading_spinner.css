@@ -1,0 +1,233 @@
+/* From Uiverse.io by Nawsome */ 
+ .loadingspinner { 
+   width: 150px; 
+   height: 100px; 
+   padding: 0px; 
+   margin-left: auto; 
+   margin-right: auto; 
+   position: relative; 
+ } 
+ 
+ .loadingspinner div { 
+   display: block; 
+   background: rgb(122, 246, 255); 
+   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); 
+   border: none; 
+   border-radius: 4px; 
+   width: 26px; 
+   height: 26px; 
+   position: absolute; 
+   opacity: 1; 
+ } 
+ 
+ .loadingspinner #square1 { 
+   left: 0px; 
+   top: 0px; 
+   animation: square1 2.4s 0.2s ease-in-out infinite, 
+                squarefadein 0.4s 0.1s ease-out both; 
+ } 
+ 
+ .loadingspinner #square2 { 
+   left: 0px; 
+   top: 30px; 
+   animation: square2 2.4s 0.2s ease-in-out infinite, 
+               squarefadein 0.4s 0.1s ease-out both; 
+ } 
+ 
+ .loadingspinner #square3 { 
+   left: 30px; 
+   top: 30px; 
+   animation: square3 2.4s 0.2s ease-in-out infinite, 
+                squarefadein 0.4s 0.2s ease-out both; 
+ } 
+ 
+ .loadingspinner #square4 { 
+   left: 60px; 
+   top: 30px; 
+   animation: square4 2.4s 0.2s ease-in-out infinite, 
+                squarefadein 0.4s 0.3s ease-out both; 
+ } 
+ 
+ .loadingspinner #square5 { 
+   left: 90px; 
+   top: 30px; 
+   animation: square5 2.4s 0.2s ease-in-out infinite, 
+                squarefadein 0.4s 0.4s ease-out both; 
+ } 
+ 
+ @keyframes square1 { 
+   0% { 
+     left: 0px; 
+     top: 0px; 
+   } 
+ 
+   8.333% { 
+     left: 0px; 
+     top: 30px; 
+   } 
+ 
+   100% { 
+     left: 0px; 
+     top: 30px; 
+   } 
+ } 
+ 
+ @keyframes square2 { 
+   0% { 
+     left: 0px; 
+     top: 30px; 
+   } 
+ 
+   8.333% { 
+     left: 0px; 
+     top: 60px; 
+   } 
+ 
+   16.67% { 
+     left: 30px; 
+     top: 60px; 
+   } 
+ 
+   25.00% { 
+     left: 30px; 
+     top: 30px; 
+   } 
+ 
+   83.33% { 
+     left: 30px; 
+     top: 30px; 
+   } 
+ 
+   91.67% { 
+     left: 30px; 
+     top: 0px; 
+   } 
+ 
+   100% { 
+     left: 0px; 
+     top: 0px; 
+   } 
+ } 
+ 
+ @keyframes square3 { 
+   0%,100% { 
+     left: 30px; 
+     top: 30px; 
+   } 
+ 
+   16.67% { 
+     left: 30px; 
+     top: 30px; 
+   } 
+ 
+   25.00% { 
+     left: 30px; 
+     top: 0px; 
+   } 
+ 
+   33.33% { 
+     left: 60px; 
+     top: 0px; 
+   } 
+ 
+   41.67% { 
+     left: 60px; 
+     top: 30px; 
+   } 
+ 
+   66.67% { 
+     left: 60px; 
+     top: 30px; 
+   } 
+ 
+   75.00% { 
+     left: 60px; 
+     top: 60px; 
+   } 
+ 
+   83.33% { 
+     left: 30px; 
+     top: 60px; 
+   } 
+ 
+   91.67% { 
+     left: 30px; 
+     top: 30px; 
+   } 
+ } 
+ 
+ @keyframes square4 { 
+   0% { 
+     left: 60px; 
+     top: 30px; 
+   } 
+ 
+   33.33% { 
+     left: 60px; 
+     top: 30px; 
+   } 
+ 
+   41.67% { 
+     left: 60px; 
+     top: 60px; 
+   } 
+ 
+   50.00% { 
+     left: 90px; 
+     top: 60px; 
+   } 
+ 
+   58.33% { 
+     left: 90px; 
+     top: 30px; 
+   } 
+ 
+   100% { 
+     left: 90px; 
+     top: 30px; 
+   } 
+ } 
+ 
+ @keyframes square5 { 
+   0% { 
+     left: 90px; 
+     top: 30px; 
+   } 
+ 
+   50.00% { 
+     left: 90px; 
+     top: 30px; 
+   } 
+ 
+   58.33% { 
+     left: 90px; 
+     top: 0px; 
+   } 
+ 
+   66.67% { 
+     left: 60px; 
+     top: 0px; 
+   } 
+ 
+   75.00% { 
+     left: 60px; 
+     top: 30px; 
+   } 
+ 
+   100% { 
+     left: 60px; 
+     top: 30px; 
+   } 
+ } 
+ 
+ @keyframes squarefadein { 
+   0% { 
+     transform: scale(0.75); 
+     opacity: 0.0; 
+   } 
+ 
+   100% { 
+     transform: scale(1.0); 
+     opacity: 1.0; 
+   } 
+ }

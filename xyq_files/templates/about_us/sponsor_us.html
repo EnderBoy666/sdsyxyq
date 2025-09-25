@@ -1,0 +1,66 @@
+{% extends "xyq_files/base.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赞助我们</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <style>
+        /* 响应式二维码样式 */
+        .qr-code-container {
+            position: relative;
+            width: 80%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .qr-code {
+            width: 100%;
+            height: auto;
+        }
+        /* 小屏幕适配 */
+        @media (max-width: 576px) {
+            .qr-code-container {
+                width: 60%;
+            }
+            .card-body {
+                padding: 1rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        /* 大屏幕适配 */
+        @media (min-width: 1984px) {
+            .qr-code-container {
+                width: 70%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-sm-10 col-md-8 col-lg-6">
+                <h2 class="text-center mb-4">支持我们的项目</h2>
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">扫描二维码赞助</h5>
+                        <div class="qr-code-container mb-4">
+                            <img src="{% static 'images/pay_QR.png' %}" alt="赞助二维码" class="qr-code img-fluid rounded">
+                        </div>
+                        <div class="alert alert-info" role="alert">
+                            <p>请在赞助留言中填写您的用户ID，以便我们为您添加积分</p>
+                            <p>积分将在5个工作日内到账，感谢您的支持！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+</body>
+</html>
+{% endblock content %}

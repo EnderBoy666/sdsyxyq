@@ -4,7 +4,7 @@
     <h3>{{ topic }}</h3>
 {% endblock page_header %}
 {% block content %}
-
+  <div class="topic-page">
     {% if topic.id == 4 %}
         <p>
             在这里说出你想要的新功能，未来就有可能实现哦~
@@ -23,41 +23,41 @@
     {% endif %}
     <ul>
     {% for entry in entries %}
-        <div class="card mb-3">
-            <h4 class="card-header d-flex justify-content-between align-items-start">
-                <div>
-                    <a href="{% url 'users:introduction' entry.owner.id %}">{{ entry.owner }}</a> 
-                    <span class="badge 
-                        {% if entry.owner.level == 1 %}bg-primary text-white{% endif %}
-                        {% if entry.owner.level == 2 %}bg-success text-white{% endif %}
-                        {% if entry.owner.level == 3 %}bg-warning text-dark{% endif %}
-                        {% if entry.owner.level == 4 %}bg-danger text-white{% endif %}
-                        {% if entry.owner.level >= 5 %}bg-dark text-white{% endif %}">
-                        等级{{ entry.owner.level }}
-                    </span> : 
-                        
-                    <small></small><small><small>
-                        <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复（{{entry.reply_count}}）</a>
-                    </small></small></small></small>
-                    <p style="font-size: 12px;">
-                        {{ entry.date_added|date:'M d, y H:i'}}
-                    </p>
+        <div class="card mb-3" style="width: 100%; height: auto;">
+            <div class="card-details">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <p class="text-title">
+                            <a href="{% url 'users:introduction' entry.owner.id %}">{{ entry.owner }}</a> 
+                            <span class="badge 
+                                {% if entry.owner.level == 1 %}bg-primary text-white{% endif %}
+                                {% if entry.owner.level == 2 %}bg-success text-white{% endif %}
+                                {% if entry.owner.level == 3 %}bg-warning text-dark{% endif %}
+                                {% if entry.owner.level == 4 %}bg-danger text-white{% endif %}
+                                {% if entry.owner.level >= 5 %}bg-dark text-white{% endif %}">
+                                等级{{ entry.owner.level }}
+                            </span>
+                            <span style="font-size: 12px; display: block;">
+                                {{ entry.date_added|date:'M d, y H:i'}}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        {% if entry.receiver %}
+                            <span class="badge bg-secondary">
+                                @<a href="{% url 'users:introduction' entry.receiver.id %}" class="text-white">{{ entry.receiver }}</a>
+                            </span>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="d-flex align-items-center">
-                    {% if entry.receiver %}
-                        <span class="badge bg-secondary me-2">
-                            @<a href="{% url 'users:introduction' entry.receiver.id %}" class="text-white">{{ entry.receiver }}</a>
-                        </span>
-                    {% endif %}
-                </div>
-            </h4>
-            <div class="card-body">
-                <p>{{ entry.text|safe|linebreaks }}</p>
+                <p class="text-body">{{ entry.text|safe|linebreaks }}</p>
             </div>
+            <a href="{% url 'xyq_files:entry' entry.id %}" class="card-button">查看回复（{{entry.reply_count}}）</a>
         </div>
     {% empty %}
         <p>此版块还没有内容哦</p>
     {% endfor %}
     </ul>
+  </div>
 
 {% endblock content %}

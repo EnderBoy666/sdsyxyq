@@ -25,7 +25,7 @@
 
 {% block content %}
     <ul>
-        <div class="card mb-3">
+        <div class="card card2 mb-3">
             <h5 class="card-header">简介：
                 {% if is_own_profile %}
                     <a href="{% url 'users:edit_profile' user1.id %}" class="btn btn-primary btn-sm">
@@ -54,7 +54,7 @@
 
     {# 自己的主页显示好友列表 #}
     {% if is_own_profile %}
-        <div class="card mb-4">
+        <div class="card card2 mb-4">
             <h5 class="card-header">我的好友 ({{ friends|length }})</h5>
             <div class="card-body">
                 {% if friends %}
@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div class="card mb-4">
+        <div class="card card2 mb-4">
             <h5 class="card-header">待处理的好友请求</h5>
             <div class="card-body">
                 {% if pending_requests %}
@@ -103,17 +103,36 @@
     <h2>{{ user1 }}发的消息：</h2>
     {% for entry in entries %}
         {% if entry.owner == user1 %}
-        <div class="card mb-3">
-            <h6 class="card-header">
-                <a href="{% url 'users:introduction' entry.owner.id %}" >{{ entry.owner }}</a> : 
-                <a href="{% url 'xyq_files:entry' entry.id %}" class="btn btn-primary btn-sm">查看回复（{{ entry.reply_count }}）</a>
-                <p style="font-size: 12px;">
-                    {{ entry.date_added|date:'M d, y H:i'}}
-                </p>
-                </h6>
-                <div class="card-body">
-                    {{ entry.text|safe|linebreaks }}
+        <div class="card card1 mb-3" style="width: 100%; height: auto;">
+            <div class="card-details">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <p class="text-title">
+                            <a href="{% url 'users:introduction' entry.owner.id %}">{{ entry.owner }}</a> 
+                            <span class="badge 
+                                {% if entry.owner.level == 1 %}bg-primary text-white{% endif %}
+                                {% if entry.owner.level == 2 %}bg-success text-white{% endif %}
+                                {% if entry.owner.level == 3 %}bg-warning text-dark{% endif %}
+                                {% if entry.owner.level == 4 %}bg-danger text-white{% endif %}
+                                {% if entry.owner.level >= 5 %}bg-dark text-white{% endif %}">
+                                等级{{ entry.owner.level }}
+                            </span>
+                            <span style="font-size: 12px; display: block;">
+                                {{ entry.date_added|date:'M d, y H:i'}}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        {% if entry.receiver %}
+                            <span class="badge bg-secondary">
+                                @<a href="{% url 'users:introduction' entry.receiver.id %}" class="text-white">{{ entry.receiver }}</a>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <p class="text-body">{{ entry.text|safe|linebreaks }}</p>
             </div>
+            <a href="{% url 'xyq_files:entry' entry.id %}" class="card-button">查看回复（{{entry.reply_count}}）</a>
         </div>
         {% endif %}
     {% empty %}

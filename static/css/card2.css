@@ -1,0 +1,173 @@
+/* From Uiverse.io by bhaveshxrawat */ 
+/* 基础card样式保持不变，确保兼容性 */
+.card {
+  transition: none;
+}
+
+/* 特定的card2样式 */
+.card2 {
+  background: #ffffff;
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 20px;
+  z-index: 1;
+}
+
+/* 为card2添加渐变背景和动画效果，并使其拉伸适应卡片大小 */
+.card2::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  max-width: 30000px;
+  background-image: linear-gradient(180deg, rgb(0, 183, 255), rgb(255, 48, 255));
+  height: 150%;
+  max-height: 40000px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  animation: rotBGimg 10s linear infinite;
+  transition: all 0.2s linear;
+  z-index: -1;
+}
+
+@keyframes rotBGimg {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* 为card2添加内部背景 */
+.card2::after {
+  content: '';
+  position: absolute;
+  background: rgb(208, 247, 255);
+  inset: 5px;
+  border-radius: 15px;
+  z-index: -1;
+}
+
+/* 确保card2内容可见 */
+.card2 .card-header,
+.card2 .card-body {
+  position: relative;
+  z-index: 2;
+  color: rgb(113, 113, 113);
+}
+
+/* 为card2的链接设置合适的颜色 */
+.card2 a {
+   color: #0077cc;
+   text-decoration: none;
+ }
+
+.card2 a:hover {
+   color: #005fa3;
+   text-decoration: underline;
+ }
+
+/* 为蓝色按钮中的链接设置高对比度颜色 */
+.card2 .btn-primary {
+   color: #ffffff !important;
+ }
+
+.card2 .btn-primary:hover {
+   color: #ffffff !important;
+ }
+
+/* 为消息卡片恢复card1样式，并与topic页面保持一致 */
+.card1 {
+  position: relative;
+  z-index: 1;
+  background: #f5f5f5;
+  border: 2px solid #c3c6ce;
+  border-radius: 20px;
+  padding: 1.8rem;
+  transition: 0.5s ease-out;
+  overflow: visible;
+  margin-bottom: 20px;
+}
+
+.card1:hover {
+  border-color: #008bf8;
+  box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+  margin-bottom: 20px;
+  transition: 0.3s ease-out;
+}
+
+.card1::before,
+.card1::after {
+  display: none;
+}
+
+/* 确保card1内容样式正确 */
+.card1 .card-header,
+.card1 .card-body {
+  color: black;
+  position: relative;
+  z-index: 2;
+}
+
+.card1 a {
+  color: #008bf8;
+  text-decoration: none;
+}
+
+.card1 a:hover {
+  color: #005fa3;
+  text-decoration: underline;
+}
+
+/* 确保标题样式与topic页面一致 */
+.card1 .text-title {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+/* 确保正文样式与topic页面一致 */
+.card1 .text-body {
+  font-size: 1em;
+  color: #666;
+}
+
+/* 确保卡片详情样式与topic页面一致 */
+.card1 .card-details {
+  color: black;
+  height: 100%;
+  gap: .5em;
+  display: grid;
+  place-content: center;
+}
+
+/* 确保卡片按钮样式与topic页面一致 */
+.card1 .card-button {
+  transform: translate(-50%, 125%);
+  width: 60%;
+  border-radius: 1rem;
+  border: none;
+  background-color: #008bf8;
+  color: #fff;
+  font-size: 1rem;
+  padding: .5rem 1rem;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  opacity: 0;
+  transition: 0.3s ease-out;
+  text-align: center;
+}
+
+/* 确保卡片按钮悬停效果与topic页面一致 */
+.card1:hover .card-button {
+  transform: translate(-50%, 50%);
+  opacity: 1;
+}
+
+/* 确保非悬停状态的过渡效果与topic页面一致 */
+.card1:not(:hover) {
+  transition: 0.3s ease-out;
+}
+

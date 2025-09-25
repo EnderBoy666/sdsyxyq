@@ -63,14 +63,15 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # 新增CORS中间件（需在CommonMiddleware之前）
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'users.middleware.RequestLimitMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 如果使用 Whitenoise 处理静态文件
+    'users.middleware.EULACheckMiddleware',  #添加EULA检查中间件
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'xyq.urls'

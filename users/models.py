@@ -7,6 +7,7 @@ class CustomUser(AbstractUser):
     # 添加自定义字段
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     introduction = models.CharField(max_length=400, blank=True, default='这个家伙很懒，还没有添加简介~~')
+    EULA_read = models.BooleanField(default=False, verbose_name='是否已阅读用户须知' )
 
     # 积分和等级字段
     points = models.PositiveIntegerField(default=0, verbose_name='用户积分')

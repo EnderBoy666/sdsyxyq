@@ -1,5 +1,4 @@
-from django.contrib.auth import login
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from .models import CustomUser
 from .forms import CustomUserCreationForm,IntroductionForm  # 导入自定义表单
 from django.http import Http404, request
@@ -28,8 +27,10 @@ def register(request):
 
         if form.is_valid():
             new_user = form.save()
-            # 让用户自动登录，并重定向到主页
+            #让用户自动登录，并重定向到主页
             login(request, new_user)
+            new_user.EULA_read = True
+            new_user.save()
             return redirect('xyq_files:index')
     
     # 显示空表单或指出表单无效
@@ -264,6 +265,16 @@ def chat_with_friend(request, friend_id):
         'messages': messages,
         'form': form
     })
+
+@login_required
+def accept_eula(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        request.user.EULA_read = True
+        request.user.save()
+        # 从表单获取重定向目标，默认跳转到首页
+        next_url = request.POST.get('next', '/')
+        return redirect(next_url)
+    return redirect('xyq_files:EULA')  # 非POST请求回到EULA页面
 
 from django.utils import timezone
 from .models import RequestLog
